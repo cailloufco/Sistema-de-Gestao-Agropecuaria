@@ -384,7 +384,28 @@ while True:
                             produto["preco"] = preco
 
                             print(f"Produto ID {id} atualizado com sucesso!")
-
+            elif op1 == 4:
+                def remover_produto(cadastro: dict):
+                    id = int(input("Digite o ID do produto que deseja remover: "))
+                    for produto in cadastro["produtos"]:
+                        if produto["id"] == id:
+                            print(
+                                f"Você tem certeza que deseja remover o produto ID {id}? (S/N)"
+                            )
+                            confirmacao = input("-> ").upper()
+                            if confirmacao == "S":
+                                cadastro["produtos"].remove(produto)
+                                print(f"Produto ID {id} removido com sucesso!")
+                                break
+                            else:
+                                print("Remoção cancelada.")
+                                break
+                    else:
+                        print(f"Produto ID {id} não encontrado.")
+        
+        elif op == 3:
+            print("Em construção...")
+        
         elif op == 0:
             usuario_logado = {"nome": None, "administrador": None, "logado": False}
             print("Deslogando...")
