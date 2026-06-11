@@ -43,3 +43,14 @@
 #     if op == 2:
 #         for nome in usuarios_cadastrados['usuario']:
 #             print(nome['nome'])
+
+
+# dict_teste = {
+#     "nome": []
+#     }
+
+# if dict_teste["nome"]:
+#     print("cai aqui quando a lista nome tiver itens")
+# else:
+#     print("cai aqui quando a lista 'nome' estiver vazia")
+

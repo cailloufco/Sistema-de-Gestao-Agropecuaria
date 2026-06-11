@@ -234,7 +234,7 @@ while True:
         menus.menu_cliente(usuario_logado)
 
         op = int(input("-> "))
-        if op > 2 or op < 0:
+        if op > 6 or op < 0:
             print(f'Opção inválida , tente novamente!{'\n'*3}')
             sleep(1)
             continue
@@ -321,7 +321,42 @@ while True:
                         print(f"Produto ID {id} não encontrado.")
 
         elif op == 2:
-            print("")
+            def vizualizar_estoque(cadastro: dict , usuario_logado: dict):
+                print(
+                    f'{"\n"*4}O que você deseja comprar, {usuario_logado["nome"]}? \n     *****MENU*****\n 1 - Visualizar Estoque de Animais à Venda\n 2 - Visualizar Estoque de Produtos\n 0 - Sair\n'
+                )
+                op = int(input("-> "))
+                if op == 1:
+                    animal_a_venda = False
+                    if cadastro["animais"]:
+
+                        for animal in cadastro["animais"]:
+                            if animal["preco"] != "Indisponivel":
+                                print(
+                                    f'ID: {animal["id"]} | Nome: {animal["nome"]} | Raça: {animal["raça"]} | Tipo: {animal["tipo"]} | Preço: {animal["preco"]} | Status: {animal["status"]}'
+                                )
+                                animal_a_venda = True
+                        if not animal_a_venda:
+                            print("Nenhum animal disponível para venda encontrado.")
+
+                    else:
+                        print("Nenhum animal cadastrado.")
+                elif op == 2:
+                    produto_disponivel = False
+                    if cadastro["produtos"]:
+                        for produto in cadastro["produtos"]:
+                            if (
+                                produto["status"] != "Indisponivel"
+                                and produto["quantidade"] != 0
+                            ):
+                                print(
+                                    f'ID: {produto["id"]} | Nome: {produto["nome"]} | Quantidade: {produto["quantidade"]} | Preço: {produto["preco"]} | Status: {produto["status"]}'
+                                )
+                                produto_disponivel = True
+                        if not produto_disponivel:
+                            print("Nenhum produto disponível para venda encontrado.")
+                    else:
+                        print("Nenhum produto cadastrado.")
 
         elif op == 0:
             print("Deslogando...")
