@@ -1,8 +1,10 @@
 from time import sleep
+from datetime import datetime
+
+
 from assets import acesso
 from assets import menus
-from assets import gerenciar_rebanho
-from assets import gerencia_producaoEderivados
+from assets import adm, cliente
 
 usuarios_cadastrados = {
     "nome": ["Caio"],
@@ -43,6 +45,7 @@ cadastro = {
         }
     ],
 }
+agendamento = {"produto": [], "animais": []}
 
 
 while True:
@@ -107,7 +110,7 @@ while True:
 
         elif op == 1:
             while True:
-                gerenciar_rebanho.exibir_menu_de_gerenciar_rebanho()
+                adm.exibir_menu_de_gerenciar_rebanho()
                 op1 = int(input("-> "))
                 if op1 > 4 or op1 < 0:
                     print(f'Opção inválida , tente novamente!{'\n'*3}')
@@ -116,19 +119,19 @@ while True:
                 elif op1 == 0:
                     break
                 elif op1 == 1:
-                    gerenciar_rebanho.cadastrar_animal(cadastro)
+                    adm.cadastrar_animal(cadastro)
 
                 elif op1 == 2:
 
-                    gerenciar_rebanho.exibir_animais(cadastro, usuario_logado)
+                    adm.exibir_animais(cadastro, usuario_logado)
 
                 elif op1 == 3:
 
-                    gerenciar_rebanho.editar_animal(cadastro)
+                    adm.editar_animal(cadastro)
 
                 elif op1 == 4:
 
-                    gerenciar_rebanho.excluir_animal(cadastro)
+                    adm.excluir_animal(cadastro)
 
         elif op == 2:
             print("""     *****MENU*****
@@ -139,89 +142,26 @@ while True:
 0 - Voltar""")
             op1 = int(input("\n-> "))
             if op1 == 1:
-
-                gerencia_producaoEderivados.cadastrar_produto(cadastro)
+                adm.cadastrar_produto(cadastro)
 
             elif op1 == 2:
-
-                gerencia_producaoEderivados.buscar_produto(cadastro, usuario_logado)
+                adm.buscar_produto(cadastro, usuario_logado)
 
             elif op1 == 3:
-
-                gerencia_producaoEderivados.atualizar_produto(cadastro)
+                adm.atualizar_produto(cadastro)
 
             elif op1 == 4:
-
-                gerencia_producaoEderivados.remover_produto(cadastro)
+                adm.remover_produto(cadastro)
 
         elif op == 3:
-            print(
-                f'{"\n"*4}Gerenciar Ração, {usuario_logado["nome"]}? \n     *****MENU*****\n 1 - Cadastrar uma ração\n 2 - Vizualizar Estoque\n 3 - Atulizar estoque\n 0 - Sair\n'
-            )
-            op1 = int(input("\n-> "))
 
-            def cadastrar_racao(cadastro: dict):
-
-                id = max(cadastro["racao"]["id"]) + 1
-
-                funcao = input(
-                    "Qual a finalidade da ração? ( ex: Engorda, Postura Inicial/Crescimento... ):\n"
-                )
-
-                nome = input(
-                    "Qual o nome da ração? ( ex: Farelo de Milho, Nutron Ovos...):\n"
-                )
-
-                quantidade = float(
-                    input("Quantos quilos de ração foram adquiridos: \n")
-                )
-
-                limiar_racao = float(
-                    input("Qual o limite minimo do estoque para esta ração?: \n")
-                )
-
-                cadastro["racao"].append(
-                    {
-                        "id": id,
-                        "funcao": funcao,
-                        "nome": nome,
-                        "quantidade": quantidade,
-                        "limiar_de_estoque": limiar_racao,
-                    }
-                )
-                print(f"Ração ID {id} cadastrada com sucesso!")
+            adm.cadastrar_racao(cadastro, usuario_logado)
 
         elif op == 4:
             print("Em construção pq precisa fazer as funcionalidades de cliente")
 
         elif op == 5:
-
-            def notificacoes(cadastro: dict):
-                print(
-                    f'{"\n"*4}Notificações, {usuario_logado["nome"]}? \n     *****MENU*****\n 1 - Animais doentes\n 2 - Estoque de ração abaixo do limiar\n 0 - Sair\n'
-                )
-                op = int(input("\n-> "))
-                if op == 1:
-                    animais_doentes = False
-                    for animal in cadastro["animais"]:
-                        if animal["status"].lower() == "doente":
-                            print(
-                                f'ID: {animal["id"]} | Nome: {animal["nome"]} | Idade: {animal["idade"]} | Raça: {animal["raça"]} | Peso: {animal["peso"]} | Tipo: {animal["tipo"]} | Gênero: {animal["genero"]} | Preço: {animal["preco"]} | Status: {animal["status"]}'
-                            )
-                            animais_doentes = True
-                    if not animais_doentes:
-                        print("Nenhum animal doente encontrado.")
-
-                elif op == 2:
-                    racao_baixo_estoque = False
-                    for racao in cadastro["racao"]:
-                        if racao["quantidade"] < racao["limiar_de_estoque"]:
-                            print(
-                                f'ID: {racao["id"]} | Função: {racao["funcao"]} | Nome: {racao["nome"]} | Quantidade: {racao["quantidade"]} | Limiar de Estoque: {racao["limiar_de_estoque"]}'
-                            )
-                            racao_baixo_estoque = True
-                    if not racao_baixo_estoque:
-                        print("Nenhuma ração com estoque abaixo do limiar encontrada.")
+            adm.notificacoes(cadastro, usuario_logado)
 
         elif op == 0:
             usuario_logado = {"nome": None, "administrador": None, "logado": False}
@@ -239,127 +179,49 @@ while True:
             sleep(1)
             continue
         elif op == 1:
-
-            def realizar_compra(cadastro: dict, usuario_logado: dict):
-                print(
-                    f'{"\n"*4}O que você deseja comprar, {usuario_logado["nome"]}? \n     *****MENU*****\n 1 - Comprar um animal\n 2 - Comprar um produto\n 0 - Sair\n'
-                )
-                op = int(input("-> "))
-                if op == 1:
-                    print("Digite o ID do animal que deseja comprar: ")
-                    id = int(input("-> "))
-                    for animal in cadastro["animais"]:
-                        if animal["id"] == id:
-                            if animal["preco"] != "Indisponivel":
-                                print(
-                                    f'ID: {animal["id"]} | Nome: {animal["nome"]} | Raça: {animal["raça"]} | Tipo: {animal["tipo"]} | Preço: {animal["preco"]} | Status: {animal["status"]}'
-                                )
-                                print("Deseja confirmar a compra? (S/N)")
-                                confirmacao = input("-> ").upper()
-                                if confirmacao == "S":
-                                    cadastro["animais"].remove(animal)
-                                    print(f"Compra do animal ID {id} confirmada!")
-                                    break
-                                else:
-                                    print("Compra cancelada.")
-                                    break
-                            else:
-                                print(f"Animal ID {id} não disponível para venda.")
-                                break
-                    else:
-                        print(f"Animal ID {id} não encontrado.")
-
-                elif op == 2:
-                    print("Digite o ID do produto que deseja comprar: ")
-                    id = int(input("-> "))
-                    for produto in cadastro["produtos"]:
-                        if produto["id"] == id:
-                            if (
-                                produto["status"] != "Indisponivel"
-                                and produto["quantidade"] != 0
-                            ):
-                                print(
-                                    f'ID: {produto["id"]} | Nome: {produto["nome"]} | Quantidade: {produto["quantidade"]} | Preço: {produto["preco"]} | Status: {produto["status"]}'
-                                )
-                                print("Deseja confirmar a compra? (S/N)")
-                                confirmacao = input("-> ").upper()
-                                if confirmacao == "S":
-                                    quantidade_comprada = int(
-                                        input(
-                                            "Digite a quantidade que deseja comprar: "
-                                        )
-                                    )
-                                    if quantidade_comprada <= 0:
-                                        print(
-                                            "Quantidade inválida. A compra foi cancelada."
-                                        )
-                                        break
-
-                                    elif quantidade_comprada > produto["quantidade"]:
-                                        print(
-                                            f"Quantidade solicitada ({quantidade_comprada}) excede o estoque disponível ({produto['quantidade']})."
-                                        )
-                                        print("A compra foi cancelada.")
-                                        break
-
-                                    else:
-                                        produto["quantidade"] -= quantidade_comprada
-                                        print(
-                                            f"Compra de {quantidade_comprada} unidades do produto ID {id} confirmada!"
-                                        )
-                                        if produto["quantidade"] == 0:
-                                            produto["status"] = "Indisponivel"
-                                        break
-                                else:
-                                    print("Compra cancelada.")
-                                    break
-                            else:
-                                print(
-                                    "Produto não disponível para venda ou sem estoque."
-                                )
-                    else:
-                        print(f"Produto ID {id} não encontrado.")
+            cliente.realizar_compra(cadastro, usuario_logado)
 
         elif op == 2:
-            def vizualizar_estoque(cadastro: dict , usuario_logado: dict):
-                print(
-                    f'{"\n"*4}O que você deseja comprar, {usuario_logado["nome"]}? \n     *****MENU*****\n 1 - Visualizar Estoque de Animais à Venda\n 2 - Visualizar Estoque de Produtos\n 0 - Sair\n'
-                )
-                op = int(input("-> "))
-                if op == 1:
-                    animal_a_venda = False
-                    if cadastro["animais"]:
+            cliente.vizualizar_estoque(cadastro, usuario_logado)
 
-                        for animal in cadastro["animais"]:
-                            if animal["preco"] != "Indisponivel":
-                                print(
-                                    f'ID: {animal["id"]} | Nome: {animal["nome"]} | Raça: {animal["raça"]} | Tipo: {animal["tipo"]} | Preço: {animal["preco"]} | Status: {animal["status"]}'
-                                )
-                                animal_a_venda = True
-                        if not animal_a_venda:
-                            print("Nenhum animal disponível para venda encontrado.")
+        elif op == 3:
+            cliente.agendar_retirada(cadastro, usuario_logado, agendamento)
 
-                    else:
-                        print("Nenhum animal cadastrado.")
-                elif op == 2:
-                    produto_disponivel = False
-                    if cadastro["produtos"]:
-                        for produto in cadastro["produtos"]:
-                            if (
-                                produto["status"] != "Indisponivel"
-                                and produto["quantidade"] != 0
-                            ):
+        elif op == 4:
+
+            def ver_agendamento(
+                usuario_logado: dict, cadastro: dict, agendamento: dict
+            ):
+                while True:
+                    print(
+                        f"Olá , {usuario_logado['nome']} , Seus Agendamentos\n1 - Agendamento de Animais\n2 - Agendamento de Produtos"
+                    )
+                    op = int(input("-> "))
+                    animal_encontrado = False
+                    if op == 1:
+                        """{
+                            "nome_cliente": nome_cliente,
+                            "tipo": tipo,
+                            "item_id": item_id,
+                            "quantidade": quantia,
+                            "data": data,
+                            "hora": hora_data,
+                            "status": "Agendado",
+                            "data_agendamento": [
+                                datetime.now().strftime("%Y-%m-%d"),
+                                datetime.now().strftime("%H:%M:%S"),
+                            ]
+                        }"""
+                        for item in agendamento["produto"]:
+                            if item["nome_cliente"] == usuario_logado["nome"]:
                                 print(
-                                    f'ID: {produto["id"]} | Nome: {produto["nome"]} | Quantidade: {produto["quantidade"]} | Preço: {produto["preco"]} | Status: {produto["status"]}'
+                                    f'ID: {item["item_id"]} | Tipo: {item["tipo"]} | Nome: {item["nome"]} | Quantidade: {item["quantia"]} | Limiar de Estoque: {item['data']} | Status: {item["status"]}'
                                 )
-                                produto_disponivel = True
-                        if not produto_disponivel:
-                            print("Nenhum produto disponível para venda encontrado.")
-                    else:
-                        print("Nenhum produto cadastrado.")
+                                animal_encontrado = True
+                        if not animal_encontrado:
+                            print("")
 
         elif op == 0:
             print("Deslogando...")
             sleep(1.6)
             usuario_logado = {"nome": None, "administrador": None, "logado": False}
-            break
