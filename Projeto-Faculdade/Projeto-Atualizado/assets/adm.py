@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 def cadastrar_produto(cadastro: dict):
     id = max(cadastro["produtos"]["id"]) + 1
 
@@ -23,57 +26,65 @@ def cadastrar_produto(cadastro: dict):
 
 
 def buscar_produto(cadastro: dict, usuario_logado: dict):
-    print(
-        f'{"\n"*4}O que você deseja buscar, {usuario_logado["nome"]}? \n     *****MENU*****\n 1 - Busca por ID do produto\n 2 - Buscar por nome dos produtos\n 3 - Buscar por status\n 4 - Verificar produtos disponíveis para venda\n 0 - Sair da busca\n'
-    )
-    op = int(input("-> "))
-    if op == 1:
-        id = int(input("Digite o ID do produto que deseja buscar: "))
-        for produto in cadastro["produtos"]:
-            if produto["id"] == id:
-                print(
-                    f'ID: {produto["id"]} | Nome: {produto["nome"]} | Quantidade: {produto["quantidade"]} | Preço: {produto["preco"]} | Status: {produto["status"]}'
-                )
-                break
-        else:
-            print(f"Produto ID {id} não encontrado.")
+    while True:
+        print(
+            f'{"\n"*4}O que você deseja buscar, {usuario_logado["nome"]}? \n     *****MENU*****\n 1 - Busca por ID do produto\n 2 - Buscar por nome dos produtos\n 3 - Buscar por status\n 4 - Verificar produtos disponíveis para venda\n 0 - Sair da busca\n'
+        )
+        op = int(input("-> "))
+        if op == 1:
+            id = int(input("Digite o ID do produto que deseja buscar: "))
+            for produto in cadastro["produtos"]:
+                if produto["id"] == id:
+                    print(
+                        f'ID: {produto["id"]} | Nome: {produto["nome"]} | Quantidade: {produto["quantidade"]} | Preço: {produto["preco"]} | Status: {produto["status"]}'
+                    )
+                    break
+            else:
+                print(f"Produto ID {id} não encontrado.")
+                continue
 
-    elif op == 2:
-        nome = input("Digite o nome do produto que deseja buscar: ")
-        produto_encontrado = False
-        for produto in cadastro["produtos"]:
-            if produto["nome"] == nome:
-                print(
-                    f'ID: {produto["id"]} | Nome: {produto["nome"]} | Quantidade: {produto["quantidade"]} | Preço: {produto["preco"]} | Status: {produto["status"]}'
-                )
-                produto_encontrado = True
+        elif op == 2:
+            nome = input("Digite o nome do produto que deseja buscar: ")
+            produto_encontrado = False
+            for produto in cadastro["produtos"]:
+                if produto["nome"] == nome:
+                    print(
+                        f'ID: {produto["id"]} | Nome: {produto["nome"]} | Quantidade: {produto["quantidade"]} | Preço: {produto["preco"]} | Status: {produto["status"]}'
+                    )
+                    produto_encontrado = True
 
-        if not produto_encontrado:
-            print(f"Produtos com nome {nome} não encontrados.")
+            if not produto_encontrado:
+                print(f"Produtos com nome {nome} não encontrados.")
+                continue
 
-    elif op == 3:
-        status = input("Digite o status do produto que deseja buscar: ")
-        produto_encontrado = False
-        for produto in cadastro["produtos"]:
-            if produto["status"] == status:
-                print(
-                    f'ID: {produto["id"]} | Nome: {produto["nome"]} | Quantidade: {produto["quantidade"]} | Preço: {produto["preco"]} | Status: {produto["status"]}'
-                )
-                produto_encontrado = True
-        if not produto_encontrado:
-            print(f"Produtos com status {status} não encontrados.")
+        elif op == 3:
+            status = input("Digite o status do produto que deseja buscar: ")
+            produto_encontrado = False
+            for produto in cadastro["produtos"]:
+                if produto["status"] == status:
+                    print(
+                        f'ID: {produto["id"]} | Nome: {produto["nome"]} | Quantidade: {produto["quantidade"]} | Preço: {produto["preco"]} | Status: {produto["status"]}'
+                    )
+                    produto_encontrado = True
+            if not produto_encontrado:
+                print(f"Produtos com status {status} não encontrados.")
+                continue
 
-    elif op == 4:
-        produtos_disponiveis = False
-        for produto in cadastro["produtos"]:
-            if produto["preco"] != "Indisponivel":
-                print(
-                    f'ID: {produto["id"]} | Nome: {produto["nome"]} | Quantidade: {produto["quantidade"]} | Preço: {produto["preco"]} | Status: {produto["status"]}'
-                )
-                produtos_disponiveis = True
+        elif op == 4:
+            produtos_disponiveis = False
+            for produto in cadastro["produtos"]:
+                if produto["preco"] != "Indisponivel":
+                    print(
+                        f'ID: {produto["id"]} | Nome: {produto["nome"]} | Quantidade: {produto["quantidade"]} | Preço: {produto["preco"]} | Status: {produto["status"]}'
+                    )
+                    produtos_disponiveis = True
 
-        if not produtos_disponiveis:
-            print("Nenhum produto disponível para venda encontrado.")
+            if not produtos_disponiveis:
+                print("Nenhum produto disponível para venda encontrado.")
+                continue
+
+        elif op == 0:
+            break
 
 
 def atualizar_produto(cadastro: dict):
@@ -128,33 +139,83 @@ def remover_produto(cadastro: dict):
 
 
 def cadastrar_racao(cadastro: dict, usuario_logado: dict):
-    print(
-        f'{"\n"*4}Gerenciar Ração, {usuario_logado["nome"]}? \n     *****MENU*****\n 1 - Cadastrar uma ração\n 2 - Vizualizar Estoque\n 3 - Atulizar estoque\n 0 - Sair\n'
-    )
-    op1 = int(input("\n-> "))
+    while True:
+        print(
+            f'{"\n"*4}Gerenciar Ração, {usuario_logado["nome"]}? \n     *****MENU*****\n 1 - Cadastrar uma ração\n 2 - Vizualizar Estoque\n 3 - Atulizar estoque\n 0 - Sair\n'
+        )
+        op = int(input("\n-> "))
+        if op > 3 or op < 0:
+            print("opção inválida!")
+            continue
+        if op == 1:
+            id = max(cadastro["racao"]["id"]) + 1
 
-    id = max(cadastro["racao"]["id"]) + 1
+            funcao = input(
+                "Qual a finalidade da ração? ( ex: Engorda, Postura Inicial/Crescimento... ):\n"
+            )
 
-    funcao = input(
-        "Qual a finalidade da ração? ( ex: Engorda, Postura Inicial/Crescimento... ):\n"
-    )
+            nome = input(
+                "Qual o nome da ração? ( ex: Farelo de Milho, Nutron Ovos...):\n"
+            )
 
-    nome = input("Qual o nome da ração? ( ex: Farelo de Milho, Nutron Ovos...):\n")
+            quantidade = float(input("Quantos quilos de ração foram adquiridos: \n"))
 
-    quantidade = float(input("Quantos quilos de ração foram adquiridos: \n"))
+            limiar_racao = float(
+                input("Qual o limite minimo do estoque para esta ração?: \n")
+            )
 
-    limiar_racao = float(input("Qual o limite minimo do estoque para esta ração?: \n"))
+            cadastro["racao"].append(
+                {
+                    "id": id,
+                    "funcao": funcao,
+                    "nome": nome,
+                    "quantidade": quantidade,
+                    "limiar_de_estoque": limiar_racao,
+                }
+            )
+            print(f"Ração ID {id} cadastrada com sucesso!")
 
-    cadastro["racao"].append(
-        {
-            "id": id,
-            "funcao": funcao,
-            "nome": nome,
-            "quantidade": quantidade,
-            "limiar_de_estoque": limiar_racao,
-        }
-    )
-    print(f"Ração ID {id} cadastrada com sucesso!")
+        elif op == 2:
+            achou = False
+            for racao in cadastro["racao"]:
+                print(
+                    f"ID: {racao['id']} | Nome: {racao['nome']} | Quantidade: {racao['quantidade']} | Limiar: {racao['limiar_de_estoque']} | Função: {'funcao'}"
+                )
+                achou = True
+            if not achou:
+                print("Nenhuma ração cadastrada")
+                sleep(1.6)
+                continue
+
+        elif op == 3:
+            print(f"Digite o ID da Ração que deseja Atualizar")
+            id = int(input("-> "))
+            for racao in cadastro["raca"]:
+                if racao["id"] == id:
+                    print(
+                        f"ID: {racao['id']} | Nome: {racao['nome']} | Quantidade: {racao['quantidade']} | Limiar: {racao['limiar_de_estoque']} | Função: {'funcao'}"
+                    )
+                    print(
+                        "Digite os novos dados do produto (deixe em branco para manter o valor atual):"
+                    )
+                    nome = input("Nome do produto: ")
+                    quantidade = input("Quantidade: ")
+                    limiar = float(input("Limiar: "))
+                    funcao = input("Status: ")
+
+                    if nome:
+                        racao["nome"] = nome
+                    if quantidade:
+                        racao["quantidade"] = quantidade
+                    if funcao:
+                        racao["funcao"] = funcao
+                    if limiar:
+                        racao["limiar_de_estoque"] = limiar
+
+                    print(f"Produto ID {id} atualizado com sucesso!")
+        elif op == 0:
+            print("Encerrando...")
+            break
 
 
 def notificacoes(cadastro: dict, usuario_logado: dict):
@@ -195,36 +256,63 @@ def exibir_menu_de_gerenciar_rebanho():
 
 
 def cadastrar_animal(cadastro: dict):
-    id = max(cadastro["animais"]["id"]) + 1
 
-    nome = input("Digite o nome do animal: ")
+    while True:
 
-    idade = int(input("Digite a idade do animal: "))
-    raça = input("Digite a raça do animal: ")
-    peso = float(input("Digite o peso do animal: "))
-    tipo = input("Digite o tipo do animal: ")
-    genero = input("Digite o gênero do animal: ")
-    status = input("Digite o status do animal: ")
-    op = input("O animal está disponível para venda? (S/N): ").upper()
-    if op == "S":
-        preco = float(input("Digite o preço do animal: "))
-    else:
-        preco = "Indisponivel"
+        ano = input("Digite o ano de nascimento: ")
+        lote = input("Digite o lote do animal: ").upper()
 
-    cadastro["animais"].append(
-        {
-            "id": id,
-            "nome": nome,
-            "idade": idade,
-            "raça": raça,
-            "peso": peso,
-            "tipo": tipo,
-            "genero": genero,
-            "preco": preco,
-            "status": status,
-        }
-    )
-    print(f"Animal {nome} da raça {raça} cadastrado com sucesso!")
+        contador = 0
+
+        for animal in cadastro["animais"]:
+            if "ano" in animal and "lote" in animal:
+                if animal["ano"] == ano and animal["lote"] == lote:
+                    animal_numero = int(animal["id"][:3])
+                    if animal_numero > contador:
+                        contador = animal_numero
+
+        numero = str(contador + 1).zfill(3)
+        ano_formatado = ano[-2:]
+        codigo = f"{numero}{ano_formatado}-{lote}"
+
+        nome = input("Digite o nome do animal: ")
+        raça = input("Digite a raça do animal: ")
+        peso = float(input("Digite o peso do animal: "))
+        tipo = input("Digite o tipo do animal: ")
+        genero = input("Digite o gênero do animal: ")
+        status = input("Digite o status do animal: ")
+
+        op = input("O animal está disponível para venda? (S/N): ").upper()
+
+        if op == "S":
+            preco = float(input("Digite o preço do animal: "))
+        else:
+            preco = "Indisponível"
+
+        cadastro["animais"].append(
+            {
+                "id": codigo,
+                "nome": nome,
+                "idade": datetime.now().year - int(ano),
+                "raça": raça,
+                "peso": peso,
+                "tipo": tipo,
+                "genero": genero,
+                "preco": preco,
+                "status": status,
+                "ano": ano,
+                "lote": lote,
+            }
+        )
+
+        print("\nAnimal cadastrado com sucesso!")
+        print(f"Nome: {nome}")
+        print(f"Código: {codigo}")
+
+        continuar = input("\nCadastrar outro animal? (S/N): ").upper()
+
+        if continuar != "S":
+            break
 
 
 def exibir_animais(cadastro: dict, usuario_logado: dict):
@@ -233,7 +321,7 @@ def exibir_animais(cadastro: dict, usuario_logado: dict):
     )
     op = int(input("-> "))
     if op == 1:
-        id = int(input("Digite o ID do animal que deseja buscar: "))
+        id = input("Digite o ID do animal que deseja buscar: ")
         for animal in cadastro["animais"]:
             if animal["id"] == id:
                 print(
@@ -283,7 +371,7 @@ def exibir_animais(cadastro: dict, usuario_logado: dict):
 
 
 def editar_animal(cadastro: dict):
-    id = int(input("Digite o ID do animal que deseja editar: "))
+    id = input("Digite o ID do animal que deseja editar: ")
     for animal in cadastro["animais"]:
         if animal["id"] == id:
             print(
@@ -326,7 +414,7 @@ def editar_animal(cadastro: dict):
 
 
 def excluir_animal(cadastro: dict):
-    id = int(input("Qual animal deseja excluir? (Digite o ID): "))
+    id = input("Qual animal deseja excluir? (Digite o ID): ")
     for animal in cadastro["animais"]:
         if animal["id"] == id:
             print(f"Você tem certeza que deseja excluir o animal ID {id}? (S/N)")

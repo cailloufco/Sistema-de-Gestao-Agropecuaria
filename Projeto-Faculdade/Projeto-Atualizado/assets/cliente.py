@@ -1,14 +1,15 @@
 from datetime import datetime
 
+
 def realizar_compra(cadastro: dict, usuario_logado: dict):
-    
+
     print(
         f'{"\n"*4}O que você deseja comprar, {usuario_logado["nome"]}? \n     *****MENU*****\n 1 - Comprar um animal\n 2 - Comprar um produto\n 0 - Sair\n'
     )
     op = int(input("-> "))
     if op == 1:
         print("Digite o ID do animal que deseja comprar: ")
-        id = int(input("-> "))
+        id = input("-> ")
         for animal in cadastro["animais"]:
             if animal["id"] == id:
                 if animal["preco"] != "Indisponivel":
@@ -109,7 +110,7 @@ def vizualizar_estoque(cadastro: dict, usuario_logado: dict):
 
 
 def agendar_retirada(cadastro: dict, usuario_logado: dict, agendamento: dict):
-    
+
     print(
         f'{"\n"*4}Agendar Retirada/Transporte, {usuario_logado["nome"]}? \n     *****MENU*****\n 1 - Agendar Retirada de Animais\n 2 - Agendar Retirada de Produtos\n 0 - Sair\n'
     )
@@ -126,6 +127,8 @@ def agendar_retirada(cadastro: dict, usuario_logado: dict, agendamento: dict):
                 print(
                     f'ID: {animal["id"]} | Nome: {animal["nome"]} | Raça: {animal["raça"]} | Tipo: {animal["tipo"]} | Preço: {animal["preco"]} | Status: {animal["status"]}'
                 )
+                animal_encontrado = True
+                animal_nome = animal["nome"]
                 break
 
         if not animal_encontrado:
@@ -213,6 +216,7 @@ def agendar_retirada(cadastro: dict, usuario_logado: dict, agendamento: dict):
                     break
 
             cadastro_agendamento = {
+                "nome": animal_nome,
                 "nome_cliente": nome_cliente,
                 "tipo": tipo,
                 "item_id": item_id,
@@ -234,7 +238,7 @@ def agendar_retirada(cadastro: dict, usuario_logado: dict, agendamento: dict):
         tipo = "Produto"
         item_id = input("Digite o ID do animal que deseja agendar a retirada: ")
         produto_encontrado = False
-        produto_nome = ''
+        produto_nome = ""
         for produto in cadastro["produtos"]:
             if produto["id"] == item_id and produto["preco"]:
                 print(
@@ -340,7 +344,7 @@ def agendar_retirada(cadastro: dict, usuario_logado: dict, agendamento: dict):
                     break
 
             cadastro_agendamento = {
-                "nome":produto_nome ,
+                "nome": produto_nome,
                 "nome_cliente": nome_cliente,
                 "tipo": tipo,
                 "item_id": item_id,
@@ -351,7 +355,7 @@ def agendar_retirada(cadastro: dict, usuario_logado: dict, agendamento: dict):
                 "data_agendamento": [
                     datetime.now().strftime("%Y-%m-%d"),
                     datetime.now().strftime("%H:%M:%S"),
-                ]
+                ],
             }
             agendamento["produtos"].append(cadastro_agendamento)
             print(
