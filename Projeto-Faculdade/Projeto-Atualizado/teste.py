@@ -1,91 +1,117 @@
-from datetime import datetime
-
-cadastro = {
-    "animais": [
+pedido_de_compra = {
+    "pedidos": [
         {
-            "id": "00126-A",
-            "nome": "Belinha",
-            "idade": 3,
-            "raça": "Holandesa",
-            "peso": 500,
-            "tipo": "Vaca",
-            "genero": "Fêmea",
-            "preco": 1500,
-            "status": "Doente",
-            "ano": "2023",
-            "lote": "A",
+            "nome_cliente": "Carlos",
+            "nome_produto": "Leite",
+            "item_id": 0,
+            "status_pedido": "Aguardo",
+            "criado_em": [
+                {"ano": 2026, "mes": 10, "dia": 16, "hora": 17, "minuto": 13}
+            ],
+            "quantidade": 120,
         }
-    ],
-    "produtos": [
-        {
-            "id": 0,
-            "nome": "Leite",
-            "quantidade": 100,
-            "preco": 2.5,
-            "status": "Disponível",
-        }
-    ],
-    "racao": [
-        {
-            "id": 0,
-            "funcao": "Alimentar os animais",
-            "nome": "Ração para bovinos",
-            "quantidade": 50,
-            "limiar_de_estoque": 10,
-        }
-    ],
+    ]
 }
+usuario_logado = {"nome": None, "administrador": None, "logado": False}
 
-while True:
 
-    ano = input("Digite o ano de nascimento: ")
-    lote = input("Digite o lote do animal: ").upper()
+def permitir_pedidos(pedido_de_compra: dict, usuario_logado: dict):
+    while True:
+        print(f"Que pedido deseja visualizar, {usuario_logado['nome']}?")
+        print(
+            "1 - Visualizar Pedidos em Aguardo\n"
+            "2 - Visualizar Pedidos Confirmados\n"
+            "3 - Visualizar Pedidos Recusados\n"
+            "0 - Sair"
+        )
 
-    contador = 1
+        op = int(input("-> "))
 
-    for animal in cadastro["animais"]:
-        if animal["ano"] == ano and animal["lote"] == lote:
-            contador += 1
+        if op == 0:
+            return
 
-    numero = str(contador).zfill(3)
-    ano_formatado = ano[-2:]
-    codigo = f"{numero}{ano_formatado}-{lote}"
+        elif op == 1:
 
-    nome = input("Digite o nome do animal: ")
-    raça = input("Digite a raça do animal: ")
-    peso = float(input("Digite o peso do animal: "))
-    tipo = input("Digite o tipo do animal: ")
-    genero = input("Digite o gênero do animal: ")
-    status = input("Digite o status do animal: ")
+            pedidos_aguardo = []
 
-    op = input("O animal está disponível para venda? (S/N): ").upper()
+            for indice, pedido in enumerate(pedido_de_compra["pedidos"]):
 
-    if op == "S":
-        preco = float(input("Digite o preço do animal: "))
-    else:
-        preco = "Indisponível"
+                if pedido["status_pedido"] == "Aguardo":
 
-    cadastro["animais"].append(
-        {
-            "id": codigo,
-            "nome": nome,
-            "idade": datetime.now().year - int(ano),
-            "raça": raça,
-            "peso": peso,
-            "tipo": tipo,
-            "genero": genero,
-            "preco": preco,
-            "status": status,
-            "ano": ano,
-            "lote": lote,
-        }
-    )
+                    pedidos_aguardo.append(indice)
 
-    print("\nAnimal cadastrado com sucesso!")
-    print(f"Nome: {nome}")
-    print(f"Código: {codigo}")
+                    data = pedido["criado_em"][0]
 
-    continuar = input("\nCadastrar outro animal? (S/N): ").upper()
+                    print(
+                        f"[{len(pedidos_aguardo)-1}] "
+                        f"NOME: {pedido['nome_cliente']} | "
+                        f"PRODUTO: {pedido['nome_produto']} | "
+                        f"ID PRODUTO: {pedido['item_id']} | "
+                        f"QUANTIDADE: {pedido['quantidade']} | "
+                        f"STATUS: {pedido['status_pedido']} | "
+                        f"CRIADO EM: "
+                        f"{data['ano']}/{str(data['mes']).zfill(2)}/{str(data['dia']).zfill(2)} "
+                        f"{str(data['hora']).zfill(2)}:{str(data['minuto']).zfill(2)}"
+                    )
 
-    if continuar != "S":
-        break
+            if len(pedidos_aguardo) == 0:
+                print("Não há pedidos aguardando aprovação.")
+                continue
+
+            escolha = int(input("\nDigite o índice do pedido que deseja analisar: "))
+
+            if escolha < 0 or escolha >= len(pedidos_aguardo):
+                print("Pedido inválido!")
+                continue
+
+            indice_real = pedidos_aguardo[escolha]
+
+            print("\n1 - Confirmar Pedido\n" "2 - Recusar Pedido\n" "0 - Cancelar")
+
+            decisao = int(input("-> "))
+
+            if decisao == 1:
+                pedido_de_compra["pedidos"][indice_real]["status_pedido"] = "Confirmado"
+                print("Pedido confirmado com sucesso!")
+                continue
+
+            elif decisao == 2:
+                pedido_de_compra["pedidos"][indice_real]["status_pedido"] = "Recusado"
+                print("Pedido recusado com sucesso!")
+                continue
+
+            elif decisao == 0:
+                break
+
+            else:
+                print("Opção inválida!")
+                continue
+        elif op == 2:
+            for pedido in pedido_de_compra["pedidos"]:
+                if pedido["status_pedido"] == "Confirmado":
+                    print(
+                        f"NOME: {pedido['nome_cliente']} | "
+                        f"PRODUTO: {pedido['nome_produto']} | "
+                        f"ID PRODUTO: {pedido['item_id']} | "
+                        f"QUANTIDADE: {pedido['quantidade']} | "
+                        f"STATUS: {pedido['status_pedido']} | "
+                        f"CRIADO EM: "
+                        f"{data['ano']}/{str(data['mes']).zfill(2)}/{str(data['dia']).zfill(2)} "
+                        f"{str(data['hora']).zfill(2)}:{str(data['minuto']).zfill(2)}"
+                    )
+        elif op == 3:
+            for pedido in pedido_de_compra["pedidos"]:
+                if pedido["status_pedido"] == "Recusado":
+                    print(
+                        f"NOME: {pedido['nome_cliente']} | "
+                        f"PRODUTO: {pedido['nome_produto']} | "
+                        f"ID PRODUTO: {pedido['item_id']} | "
+                        f"QUANTIDADE: {pedido['quantidade']} | "
+                        f"STATUS: {pedido['status_pedido']} | "
+                        f"CRIADO EM: {data['ano']}/{str(data['mes']).zfill(2)}/{str(data['dia']).zfill(2)} {str(data['hora']).zfill(2)}:{str(data['minuto']).zfill(2)}"
+                        
+                        
+                    )
+
+
+permitir_pedidos(pedido_de_compra, usuario_logado)

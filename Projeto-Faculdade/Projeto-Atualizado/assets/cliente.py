@@ -1,11 +1,14 @@
 from datetime import datetime
+from assets import menus
 
 
 def realizar_compra(cadastro: dict, usuario_logado: dict):
-
-    print(
-        f'{"\n"*4}O que você deseja comprar, {usuario_logado["nome"]}? \n     *****MENU*****\n 1 - Comprar um animal\n 2 - Comprar um produto\n 0 - Sair\n'
-    )
+    menus.mostrar_cabecalho_tela("COMPRAR")
+    print(f"O que você deseja comprar, {usuario_logado['nome']}?\n")
+    print(" 1 - Comprar um animal")
+    print(" 2 - Comprar um produto")
+    print(" 0 - Sair")
+    print("=" * 60)
     op = int(input("-> "))
     if op == 1:
         print("Digite o ID do animal que deseja comprar: ")
@@ -75,9 +78,12 @@ def realizar_compra(cadastro: dict, usuario_logado: dict):
 
 
 def vizualizar_estoque(cadastro: dict, usuario_logado: dict):
-    print(
-        f'{"\n"*4}O que você deseja comprar, {usuario_logado["nome"]}? \n     *****MENU*****\n 1 - Visualizar Estoque de Animais à Venda\n 2 - Visualizar Estoque de Produtos\n 0 - Sair\n'
-    )
+    menus.mostrar_cabecalho_tela("ESTOQUE")
+    print(f"O que você deseja ver, {usuario_logado['nome']}?\n")
+    print(" 1 - Visualizar Estoque de Animais à Venda")
+    print(" 2 - Visualizar Estoque de Produtos")
+    print(" 0 - Sair")
+    print("=" * 60)
     op = int(input("-> "))
     if op == 1:
         animal_a_venda = False
@@ -110,10 +116,12 @@ def vizualizar_estoque(cadastro: dict, usuario_logado: dict):
 
 
 def agendar_retirada(cadastro: dict, usuario_logado: dict, agendamento: dict):
-
-    print(
-        f'{"\n"*4}Agendar Retirada/Transporte, {usuario_logado["nome"]}? \n     *****MENU*****\n 1 - Agendar Retirada de Animais\n 2 - Agendar Retirada de Produtos\n 0 - Sair\n'
-    )
+    menus.mostrar_cabecalho_tela("AGENDAR RETIRADA")
+    print(f"Agendar Retirada/Transporte, {usuario_logado['nome']}?\n")
+    print(" 1 - Agendar Retirada de Animais")
+    print(" 2 - Agendar Retirada de Produtos")
+    print(" 0 - Sair")
+    print("=" * 60)
     op = int(input("-> "))
     if op == 1:
 
@@ -361,3 +369,115 @@ def agendar_retirada(cadastro: dict, usuario_logado: dict, agendamento: dict):
             print(
                 f"Retirada do produto ID {item_id} agendada para {data} às {hora_data}."
             )
+
+
+def ver_agendamento(usuario_logado: dict, cadastro: dict, agendamento: dict):
+    while True:
+        print(
+            f"Olá , {usuario_logado['nome']} , Seus Agendamentos\n1 - Agendamento de Animais\n2 - Agendamento de Produtos\n0 - Sair"
+        )
+        op = int(input("-> "))
+        encontrado = False
+        if op == 1:
+            """{
+                "nome": nome_produto
+                "nome_cliente": nome_cliente,
+                "tipo": tipo,
+                "item_id": item_id,
+                "quantidade": quantia,
+                "data": data,
+                "hora": hora_data,
+                "status": "Agendado",
+                "data_agendamento": [
+                    datetime.now().strftime("%Y-%m-%d"),
+                    datetime.now().strftime("%H:%M:%S"),
+                ]
+            }"""
+            for produto in agendamento["produto"]:
+                if produto["nome_cliente"] == usuario_logado["nome"]:
+                    print(
+                        f'ID: {produto["item_id"]} | Tipo: {produto["tipo"]} | Nome: {produto["nome"]} | Quantidade: {produto["quantia"]} | Dia da Coleta: {produto['data']} | Status: {produto["status"]} | Criado : {produto["data_agendamento"][0]} , {produto["data_agendamento"][1]}'
+                    )
+                    encontrado = True
+            if not encontrado:
+                print(
+                    f"{usuario_logado['nome']} , agendamento não encontrado ou não existente"
+                )
+        # so pra me localizar , tenho q fazer a busca de agendamentos pelos animais pq pelo produto ta feito
+
+        if op == 2:
+            for animal in agendamento["animais"]:
+                if animal["nome_cliente"] == usuario_logado["nome"]:
+                    print(
+                        f'ID: {animal["item_id"]} | Tipo: {animal["tipo"]} | Nome: {animal["nome"]} | Quantidade: {animal["quantia"]} | Dia da Coleta: {animal['data']} | Status: {animal["status"]} | Criado : {animal["data_agendamento"][0]} , {animal["data_agendamento"][1]}'
+                    )
+                    encontrado = True
+            if not encontrado:
+                print(
+                    f"{usuario_logado['nome']} , agendamento não encontrado ou não existente"
+                )
+
+def pedido_de_compra(
+                pedido_de_compra: dict, usuario_logado: dict, cadastro: dict
+            ):
+                while True:
+                    print(
+                        f"Olá , {usuario_logado['nome']}! Deseja realizar um pedido de compra de um PRODUTO? ( S / N )"
+                    )
+                    op = input("->").upper()
+                    if op == "S":
+                        print("Digite o ID do PRODUTO que deseja realizar um pedido")
+                        id = int(input("->"))
+                        nome_produto = None
+                        achado = False
+                        for produto in cadastro["produtos"]:
+                            if (
+                                produto["id"] == id
+                                and produto["status"] != "Indisponivel"
+                            ):
+                                print(
+                                    f'ID: {produto["id"]} | Nome: {produto["nome"]} | Quantidade: {produto["quantidade"]} | Preço: {produto["preco"]} | Status: {produto["status"]}'
+                                )
+                                nome_produto = produto["nome"]
+                                produto_id = produto["id"]
+                                quantidade = produto["quantidade"]
+
+                                achado = True
+                                break
+                        if not achado:
+                            print("Produto não disponível para venda ou sem estoque.")
+                            break
+                        quando_criado = [
+                            {
+                                "ano": datetime.now().year,
+                                "mes": datetime.now().month,
+                                "dia": datetime.now().day,
+                                "hora": datetime.now().hour,
+                                "minuto": datetime.now().minute,
+                            }
+                        ]
+                        pedido = {
+                            "nome_cliente": usuario_logado["nome"],
+                            "nome_produto": nome_produto,
+                            "item_id": produto_id,
+                            "status_pedido": "Aguardo",
+                            "criado_em": quando_criado,
+                            "quantidade": quantidade,
+                        }
+                        pedido_de_compra["pedidos"].append(pedido)
+                    else:
+                        print("Saindo...")
+                        break
+
+def exibir_pedidos(pedidos: dict, usuario_logado: dict):
+                print(f"Olá , {usuario_logado['nome']} , Seus Pedidos:")
+                achado = False
+                for pedido in pedidos["pedidos"]:
+                    if pedido["nome_cliente"] == usuario_logado["nome"]:
+                        print(
+                            f"ID : {pedido['item_id']}  | Produto Pedido: {pedido['nome_produto']} | Quantidade : {pedido['quantidade']}  | Status : {pedido['status_pedido']} | Criado em: {pedido['criado_em'][0]}/{pedido['criado_em'][1]}/{pedido['criado_em'][2]} , {pedido['criado_em'][3]}-{pedido['criado_em'][4]}"
+                        )
+                    achado = True
+                if not achado:
+                    print(f'{usuario_logado["nome"]} , Nenhum Pedido Realizado!')
+                    return

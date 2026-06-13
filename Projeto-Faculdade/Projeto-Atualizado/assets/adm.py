@@ -1,8 +1,10 @@
 from datetime import datetime
+from assets import menus
 
 
 def cadastrar_produto(cadastro: dict):
-    id = max(cadastro["produtos"]["id"]) + 1
+    ids_existentes = [produto["id"] for produto in cadastro["produtos"]]
+    id = max(ids_existentes, default=-1) + 1
 
     nome = input("Nome: ")
     quantidade = int(input("Quantidade: "))
@@ -26,10 +28,16 @@ def cadastrar_produto(cadastro: dict):
 
 
 def buscar_produto(cadastro: dict, usuario_logado: dict):
+    menus.mostrar_cabecalho_tela("BUSCA DE PRODUTOS")
+    print(f"O que você deseja buscar, {usuario_logado['nome']}?\n")
+    print(" 1 - Busca por ID do produto")
+    print(" 2 - Buscar por nome dos produtos")
+    print(" 3 - Buscar por status")
+    print(" 4 - Verificar produtos disponíveis para venda")
+    print(" 0 - Sair da busca")
+    print("=" * 60)
+
     while True:
-        print(
-            f'{"\n"*4}O que você deseja buscar, {usuario_logado["nome"]}? \n     *****MENU*****\n 1 - Busca por ID do produto\n 2 - Buscar por nome dos produtos\n 3 - Buscar por status\n 4 - Verificar produtos disponíveis para venda\n 0 - Sair da busca\n'
-        )
         op = int(input("-> "))
         if op == 1:
             id = int(input("Digite o ID do produto que deseja buscar: "))
@@ -41,7 +49,6 @@ def buscar_produto(cadastro: dict, usuario_logado: dict):
                     break
             else:
                 print(f"Produto ID {id} não encontrado.")
-                continue
 
         elif op == 2:
             nome = input("Digite o nome do produto que deseja buscar: ")
@@ -55,7 +62,6 @@ def buscar_produto(cadastro: dict, usuario_logado: dict):
 
             if not produto_encontrado:
                 print(f"Produtos com nome {nome} não encontrados.")
-                continue
 
         elif op == 3:
             status = input("Digite o status do produto que deseja buscar: ")
@@ -68,7 +74,6 @@ def buscar_produto(cadastro: dict, usuario_logado: dict):
                     produto_encontrado = True
             if not produto_encontrado:
                 print(f"Produtos com status {status} não encontrados.")
-                continue
 
         elif op == 4:
             produtos_disponiveis = False
@@ -78,13 +83,14 @@ def buscar_produto(cadastro: dict, usuario_logado: dict):
                         f'ID: {produto["id"]} | Nome: {produto["nome"]} | Quantidade: {produto["quantidade"]} | Preço: {produto["preco"]} | Status: {produto["status"]}'
                     )
                     produtos_disponiveis = True
-
             if not produtos_disponiveis:
                 print("Nenhum produto disponível para venda encontrado.")
-                continue
 
         elif op == 0:
             break
+
+        else:
+            print("Opção inválida.")
 
 
 def atualizar_produto(cadastro: dict):
@@ -140,15 +146,20 @@ def remover_produto(cadastro: dict):
 
 def cadastrar_racao(cadastro: dict, usuario_logado: dict):
     while True:
-        print(
-            f'{"\n"*4}Gerenciar Ração, {usuario_logado["nome"]}? \n     *****MENU*****\n 1 - Cadastrar uma ração\n 2 - Vizualizar Estoque\n 3 - Atulizar estoque\n 0 - Sair\n'
-        )
+        menus.mostrar_cabecalho_tela("GERENCIAR RAÇÃO")
+        print(f"Gerenciar Ração, {usuario_logado['nome']}?\n")
+        print(" 1 - Cadastrar uma ração")
+        print(" 2 - Visualizar Estoque")
+        print(" 3 - Atualizar estoque")
+        print(" 0 - Sair")
+        print("=" * 60)
         op = int(input("\n-> "))
         if op > 3 or op < 0:
-            print("opção inválida!")
+            print("Opção inválida. Tente novamente.\n")
             continue
         if op == 1:
-            id = max(cadastro["racao"]["id"]) + 1
+            ids_existentes = [item["id"] for item in cadastro["racao"]]
+            id = max(ids_existentes, default=-1) + 1
 
             funcao = input(
                 "Qual a finalidade da ração? ( ex: Engorda, Postura Inicial/Crescimento... ):\n"
@@ -190,10 +201,10 @@ def cadastrar_racao(cadastro: dict, usuario_logado: dict):
         elif op == 3:
             print(f"Digite o ID da Ração que deseja Atualizar")
             id = int(input("-> "))
-            for racao in cadastro["raca"]:
+            for racao in cadastro["racao"]:
                 if racao["id"] == id:
                     print(
-                        f"ID: {racao['id']} | Nome: {racao['nome']} | Quantidade: {racao['quantidade']} | Limiar: {racao['limiar_de_estoque']} | Função: {'funcao'}"
+                        f"ID: {racao['id']} | Nome: {racao['nome']} | Quantidade: {racao['quantidade']} | Limiar: {racao['limiar_de_estoque']} | Função: {racao['funcao']}"
                     )
                     print(
                         "Digite os novos dados do produto (deixe em branco para manter o valor atual):"
@@ -219,9 +230,12 @@ def cadastrar_racao(cadastro: dict, usuario_logado: dict):
 
 
 def notificacoes(cadastro: dict, usuario_logado: dict):
-    print(
-        f'{"\n"*4}Notificações, {usuario_logado["nome"]}? \n     *****MENU*****\n 1 - Animais doentes\n 2 - Estoque de ração abaixo do limiar\n 0 - Sair\n'
-    )
+    menus.mostrar_cabecalho_tela("NOTIFICAÇÕES")
+    print(f"Notificações, {usuario_logado['nome']}?\n")
+    print(" 1 - Animais doentes")
+    print(" 2 - Estoque de ração abaixo do limiar")
+    print(" 0 - Sair")
+    print("=" * 60)
     op = int(input("\n-> "))
     if op == 1:
         animais_doentes = False
@@ -279,7 +293,11 @@ def cadastrar_animal(cadastro: dict):
         raça = input("Digite a raça do animal: ")
         peso = float(input("Digite o peso do animal: "))
         tipo = input("Digite o tipo do animal: ")
-        genero = input("Digite o gênero do animal: ")
+        genero = input("Digite o gênero do animal:  ( M - F )").upper()
+        if genero != "F" and genero != "M":
+            print("Genero inválido! Tente novamente....\n\n\n\n")
+            sleep(1.6)
+            continue
         status = input("Digite o status do animal: ")
 
         op = input("O animal está disponível para venda? (S/N): ").upper()
@@ -316,9 +334,14 @@ def cadastrar_animal(cadastro: dict):
 
 
 def exibir_animais(cadastro: dict, usuario_logado: dict):
-    print(
-        f'{"\n"*4}Qual animal você deseja visualizar, {usuario_logado["nome"]}? \n     *****MENU*****\n 1 - Busca por ID do animal\n 2 - Buscar por Tipo dos animais\n 3 - Buscar por status\n 4 - Verificar animais à venda\n 0 - Sair da busca\n'
-    )
+    menus.mostrar_cabecalho_tela("VISUALIZAR ANIMAIS")
+    print(f"Qual animal você deseja visualizar, {usuario_logado['nome']}?\n")
+    print(" 1 - Busca por ID do animal")
+    print(" 2 - Buscar por Tipo dos animais")
+    print(" 3 - Buscar por status")
+    print(" 4 - Verificar animais à venda")
+    print(" 0 - Sair da busca")
+    print("=" * 60)
     op = int(input("-> "))
     if op == 1:
         id = input("Digite o ID do animal que deseja buscar: ")
@@ -357,7 +380,7 @@ def exibir_animais(cadastro: dict, usuario_logado: dict):
         for animal in cadastro["animais"]:
             if animal["preco"] != "Indisponivel":
                 print(
-                    f'ID: {animal["id"]} | Nome: {animal["nome"]} | Raça: {animal["raça"]} | Tipo: {animal["tipo"]} | Preço: {animal["preco"]} | Status: {animal["status"]}'
+                    f'ID: {animal["id"]} | Nome: {animal["nome"]} | Raça: {animal["raça"]} | Gênero: {animal["genero"]} | Tipo: {animal["tipo"]} | Preço: {animal["preco"]} | Status: {animal["status"]} | '
                 )
                 animais_a_venda = True
         if not animais_a_venda:
@@ -428,3 +451,104 @@ def excluir_animal(cadastro: dict):
                 break
     else:
         print(f"Animal ID {id} não encontrado.")
+
+def permitir_pedidos(pedido_de_compra: dict, usuario_logado: dict):
+                while True:
+                    menus.mostrar_cabecalho_tela('PEDIDOS DE COMPRA')
+                    print(f"Que pedido deseja visualizar, {usuario_logado['nome']}?")
+                    print(
+                        "1 - Visualizar Pedidos em Aguardo\n"
+                        "2 - Visualizar Pedidos Confirmados\n"
+                        "3 - Visualizar Pedidos Recusados\n"
+                        "0 - Sair"
+                    )
+
+                    op = int(input("-> "))
+                    if op > 3 or op < 0:
+                        print("Opção Inválida!")
+                        continue
+                    if op == 0:
+                        break
+
+                    elif op == 1:
+
+                        pedidos_aguardo = []
+
+                        for indice, pedido in enumerate(pedido_de_compra["pedidos"]):
+
+                            if pedido["status_pedido"] == "Aguardo":
+
+                                pedidos_aguardo.append(indice)
+
+                                data = pedido["criado_em"][0]
+
+                                print(
+                                    f"[{len(pedidos_aguardo)-1}] "
+                                    f"NOME: {pedido['nome_cliente']} | "
+                                    f"PRODUTO: {pedido['nome_produto']} | "
+                                    f"ID PRODUTO: {pedido['item_id']} | "
+                                    f"QUANTIDADE: {pedido['quantidade']} | "
+                                    f"STATUS: {pedido['status_pedido']} | "
+                                    f"CRIADO EM: "
+                                    f"{data['ano']}/{str(data['mes']).zfill(2)}/{str(data['dia']).zfill(2)} "
+                                    f"{str(data['hora']).zfill(2)}:{str(data['minuto']).zfill(2)}"
+                                )
+
+                        if len(pedidos_aguardo) == 0:
+                            print("Não há pedidos aguardando aprovação.")
+                            continue
+
+                        escolha = int(input("\nDigite o índice do pedido que deseja analisar: "))
+
+                        if escolha < 0 or escolha >= len(pedidos_aguardo):
+                            print("Pedido inválido!")
+                            continue
+
+                        indice_real = pedidos_aguardo[escolha]
+
+                        print("\n1 - Confirmar Pedido\n" "2 - Recusar Pedido\n" "0 - Cancelar")
+
+                        decisao = int(input("-> "))
+
+                        if decisao == 1:
+                            pedido_de_compra["pedidos"][indice_real]["status_pedido"] = "Confirmado"
+                            print("Pedido confirmado com sucesso!")
+                            continue
+
+                        elif decisao == 2:
+                            pedido_de_compra["pedidos"][indice_real]["status_pedido"] = "Recusado"
+                            print("Pedido recusado com sucesso!")
+                            continue
+
+                        elif decisao == 0:
+                            break
+
+                        else:
+                            print("Opção inválida!")
+                            continue
+                    elif op == 2:
+                        for pedido in pedido_de_compra["pedidos"]:
+                            if pedido["status_pedido"] == "Confirmado":
+                                print(
+                                    f"NOME: {pedido['nome_cliente']} | "
+                                    f"PRODUTO: {pedido['nome_produto']} | "
+                                    f"ID PRODUTO: {pedido['item_id']} | "
+                                    f"QUANTIDADE: {pedido['quantidade']} | "
+                                    f"STATUS: {pedido['status_pedido']} | "
+                                    f"CRIADO EM: "
+                                    f"{data['ano']}/{str(data['mes']).zfill(2)}/{str(data['dia']).zfill(2)} "
+                                    f"{str(data['hora']).zfill(2)}:{str(data['minuto']).zfill(2)}"
+                                )
+                    elif op == 3:
+                        for pedido in pedido_de_compra["pedidos"]:
+                            if pedido["status_pedido"] == "Recusado":
+                                print(
+                                    f"NOME: {pedido['nome_cliente']} | "
+                                    f"PRODUTO: {pedido['nome_produto']} | "
+                                    f"ID PRODUTO: {pedido['item_id']} | "
+                                    f"QUANTIDADE: {pedido['quantidade']} | "
+                                    f"STATUS: {pedido['status_pedido']} | "
+                                    f"CRIADO EM: {data['ano']}/{str(data['mes']).zfill(2)}/{str(data['dia']).zfill(2)} {str(data['hora']).zfill(2)}:{str(data['minuto']).zfill(2)}"
+                                    
+                                    
+                                )
