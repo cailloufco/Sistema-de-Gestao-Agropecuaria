@@ -1,15 +1,34 @@
 from time import sleep
 from datetime import datetime
 
+from rich import print
+from rich.panel import Panel
+from rich import box
+import time
+from rich.progress import track
+
+
+import os
 
 from assets import acesso
 from assets import menus
 from assets import adm, cliente
 
+
+
+print(Panel.fit("Bem-Vindo ao Sistema Fazenda Sertão!", title="[italic green]Fazenda Sertão[/]" , padding= (1), title_align="left"))
+
+for i in track(range(10), description="Carregando..."):
+    time.sleep(0.3)
+
+sleep(1)
+os.system('cls' if os.name == 'nt' else 'clear')
+
+
 usuarios_cadastrados = {
     "nome": ["Caio"],
     "senha": ["Caio123"],
-    "administrador": [False],
+    "administrador": [True],
 }
 usuario_logado = {"nome": None, "administrador": None, "logado": False}
 cadastro = {
@@ -33,8 +52,16 @@ cadastro = {
             "quantidade": 100,
             "preco": 2.5,
             "status": "Disponível",
+        },
+        {
+            "id": 1,
+            "nome": "Queijo",
+            "quantidade": 52,
+            "preco": 5.99,
+            "status": "Disponível",
         }
-    ],
+    ]
+    ,
     "racao": [
         {
             "id": 0,
