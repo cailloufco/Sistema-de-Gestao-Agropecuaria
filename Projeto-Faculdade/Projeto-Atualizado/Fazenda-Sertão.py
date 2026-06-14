@@ -14,15 +14,20 @@ from assets import acesso
 from assets import menus
 from assets import adm, cliente
 
-
-
-print(Panel.fit("Bem-Vindo ao Sistema Fazenda Sertão!", title="[italic green]Fazenda Sertão[/]" , padding= (1), title_align="left"))
+print(
+    Panel.fit(
+        "Bem-Vindo ao Sistema Fazenda Sertão!",
+        title="[italic green]Fazenda Sertão[/]",
+        padding=(1),
+        title_align="left",
+    )
+)
 
 for i in track(range(10), description="Carregando..."):
     time.sleep(0.3)
 
 sleep(1)
-os.system('cls' if os.name == 'nt' else 'clear')
+os.system("cls" if os.name == "nt" else "clear")
 
 
 usuarios_cadastrados = {
@@ -34,15 +39,17 @@ usuario_logado = {"nome": None, "administrador": None, "logado": False}
 cadastro = {
     "animais": [
         {
-            "id": "00126-A",
+            "id": "00123-A",
             "nome": "Belinha",
             "idade": 3,
-            "raça": "Holandesa",
-            "peso": 500,
+            "raça": "Nelore",
+            "peso": 324,
             "tipo": "Vaca",
-            "genero": "Fêmea",
-            "preco": 1500,
+            "genero": "F",
+            "preco": 3.370,
             "status": "Doente",
+            "ano": "2023",
+            "lote": "A",
         }
     ],
     "produtos": [
@@ -59,9 +66,8 @@ cadastro = {
             "quantidade": 52,
             "preco": 5.99,
             "status": "Disponível",
-        }
-    ]
-    ,
+        },
+    ],
     "racao": [
         {
             "id": 0,
@@ -196,7 +202,7 @@ while True:
         elif op == 4:
 
             adm.permitir_pedidos(pedido_de_compra, usuario_logado)
-                    
+
         elif op == 5:
             adm.notificacoes(cadastro, usuario_logado)
 
@@ -228,13 +234,12 @@ while True:
             cliente.ver_agendamento(usuario_logado, agendamento)
 
         elif op == 5:
-            cliente.pedido_de_compra(pedido_de_compra , usuario_logado , cadastro)
-            
+            cliente.pedido_de_compra(pedido_de_compra, usuario_logado, cadastro)
 
         elif op == 6:
-            
-            cliente.exibir_pedidos(pedido_de_compra , usuario_logado)
-            
+
+            cliente.exibir_pedidos(pedido_de_compra, usuario_logado)
+
         elif op == 0:
             print("Deslogando...")
             sleep(1.6)

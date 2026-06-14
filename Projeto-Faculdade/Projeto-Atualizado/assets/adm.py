@@ -18,8 +18,8 @@ def cadastrar_produto(cadastro: dict):
         nome = input("Nome: ")
         quantidade = int(input("Quantidade: "))
         print("O produto está disponível para venda? (S/N): ")
-        
-        print("[bold blue]->[/]" , end='')
+
+        print("[bold blue]->[/]", end="")
         op = input(" ").upper()
         if op == "S":
             preco = float(input("Preço: "))
@@ -161,7 +161,7 @@ def buscar_produto(cadastro: dict, usuario_logado: dict):
                         produto["nome"],
                         str(produto["quantidade"]),
                         str(produto["preco"]),
-                        produto("status"),
+                        produto["status"],
                     )
                     console.print(table)
                     produtos_disponiveis = True
@@ -183,7 +183,7 @@ def buscar_produto(cadastro: dict, usuario_logado: dict):
                     produto["nome"],
                     str(produto["quantidade"]),
                     str(produto["preco"]),
-                    produto("status"),
+                    produto["status"],
                 )
                 achou = True
             if achou:
@@ -214,7 +214,7 @@ def atualizar_produto(cadastro: dict):
                 produto["nome"],
                 str(produto["quantidade"]),
                 str(produto["preco"]),
-                produto("status"),
+                produto["status"],
             )
 
             console.print(table)
@@ -225,8 +225,8 @@ def atualizar_produto(cadastro: dict):
             nome = input("Nome do produto: ")
             quantidade = input("Quantidade: ")
             print("O produto está disponível para venda? (S/N): ")
-            
-            print("[bold blue]->[/]" , end='')
+
+            print("[bold blue]->[/]", end="")
             op = input(" ").upper()
             if op == "S":
                 preco = float(input("Preço: "))
@@ -238,7 +238,7 @@ def atualizar_produto(cadastro: dict):
             if nome:
                 produto["nome"] = nome
             if quantidade:
-                produto["quantidade"] = quantidade
+                produto["quantidade"] = int(quantidade)
             if status:
                 produto["status"] = status
             if preco:
@@ -257,7 +257,7 @@ def atualizar_produto(cadastro: dict):
                 produto["nome"],
                 str(produto["quantidade"]),
                 str(produto["preco"]),
-                produto("status"),
+                produto["status"],
             )
 
             console.print(table)
@@ -283,7 +283,7 @@ def remover_produto(cadastro: dict):
                 produto["nome"],
                 str(produto["quantidade"]),
                 str(produto["preco"]),
-                produto("status"),
+                produto["status"],
             )
 
             console.print(table)
@@ -292,8 +292,7 @@ def remover_produto(cadastro: dict):
                 f"\nVocê tem certeza que deseja remover o produto ID [bold yellow]{id}[/]"
             )
 
-            
-            print("[bold blue]->[/]" , end='')
+            print("[bold blue]->[/]", end="")
             confirmacao = input(" ").upper()
             if confirmacao == "S":
 
@@ -319,8 +318,8 @@ def cadastrar_racao(cadastro: dict, usuario_logado: dict):
         print(" 3 - Atualizar estoque")
         print(" 0 - Sair")
         print("=" * 60)
-        
-        print("\n[bold blue]->[/]" , end='')
+
+        print("\n[bold blue]->[/]", end="")
         op = int(input(" "))
         if op > 3 or op < 0:
             print("Opção inválida. Tente novamente.\n")
@@ -360,7 +359,7 @@ def cadastrar_racao(cadastro: dict, usuario_logado: dict):
             achou = False
             for racao in cadastro["racao"]:
                 print(
-                    f"ID: {racao['id']} | Nome: {racao['nome']} | Quantidade: {racao['quantidade']} | Limiar: {racao['limiar_de_estoque']} | Função: {'funcao'}"
+                    f"ID: {racao['id']} | Nome: {racao['nome']} | Quantidade: {racao['quantidade']} | Limiar: {racao['limiar_de_estoque']} | Função: {racao['funcao']}"
                 )
                 achou = True
             if not achou:
@@ -370,8 +369,8 @@ def cadastrar_racao(cadastro: dict, usuario_logado: dict):
 
         elif op == 3:
             print(f"Digite o ID da Ração que deseja Atualizar")
-            
-            print("[bold blue]->[/]" , end='')
+
+            print("[bold blue]->[/]", end="")
             id = int(input(" "))
             for racao in cadastro["racao"]:
                 if racao["id"] == id:
@@ -383,17 +382,17 @@ def cadastrar_racao(cadastro: dict, usuario_logado: dict):
                     )
                     nome = input("Nome do produto: ")
                     quantidade = input("Quantidade: ")
-                    limiar = float(input("Limiar: "))
+                    limiar = input("Limiar: ")
                     funcao = input("Status: ")
 
                     if nome:
                         racao["nome"] = nome
                     if quantidade:
-                        racao["quantidade"] = quantidade
+                        racao["quantidade"] = float(quantidade)
                     if funcao:
                         racao["funcao"] = funcao
                     if limiar:
-                        racao["limiar_de_estoque"] = limiar
+                        racao["limiar_de_estoque"] = float(limiar)
 
                     print(f"Produto ID {id} atualizado com sucesso!")
         elif op == 0:
@@ -409,7 +408,7 @@ def notificacoes(cadastro: dict, usuario_logado: dict):
     print(" 0 - Sair")
     print("=" * 60)
 
-    print("\n[bold blue]->[/]" , end='')
+    print("\n[bold blue]->[/]", end="")
     op = int(input(" "))
     if op == 1:
         table = Table(title="[bold italic]Cadastrar Animal[/]")
@@ -429,11 +428,11 @@ def notificacoes(cadastro: dict, usuario_logado: dict):
                 table.add_row(
                     animal["id"],
                     animal["nome"],
-                    animal["idade"],
+                    str(animal["idade"]),
                     str(animal["peso"]),
                     animal["status"],
                     animal["genero"],
-                    animal["preco"],
+                    str(animal["preco"]),
                     animal["tipo"],
                 )
 
@@ -459,8 +458,8 @@ def notificacoes(cadastro: dict, usuario_logado: dict):
                     str(racao["id"]),
                     racao["nome"],
                     racao["funcao"],
-                    racao["quantidade"],
-                    racao["limiar_de_estoque"],
+                    str(racao["quantidade"]),
+                    str(racao["limiar_de_estoque"]),
                 )
 
                 racao_baixo_estoque = True
@@ -547,13 +546,11 @@ def cadastrar_animal(cadastro: dict):
         table.add_row(
             codigo,
             nome,
-            str(
-                datetime.now().year - int(ano),
-                str(peso),
-                status,
-                genero,
-                str(preco) + "$",
-            ),
+            str(datetime.now().year - int(ano)),
+            str(peso),
+            status,
+            genero,
+            str(preco) + "$",
             tipo,
         )
 
@@ -576,8 +573,8 @@ def exibir_animais(cadastro: dict, usuario_logado: dict):
         print(" 5 - Visualizar todos os animais")
         print(" 0 - Sair da busca")
         print("=" * 60)
-        
-        print("[bold blue]->[/]" , end='')
+
+        print("[bold blue]->[/]", end="")
         op = int(input(" "))
         if op == 1:
             id = input("Digite o ID do animal que deseja buscar: ")
@@ -586,7 +583,7 @@ def exibir_animais(cadastro: dict, usuario_logado: dict):
 
                     console = Console()
 
-                    table = Table(title="Animais Encontrados")
+                    table = Table(title="[bold italic]Animais Encontrados[/]")
 
                     table.add_column("ID")
                     table.add_column("Nome")
@@ -609,59 +606,57 @@ def exibir_animais(cadastro: dict, usuario_logado: dict):
         elif op == 2:
             tipo = input("Digite o tipo do animal que deseja buscar: ")
             animal_encontrado = False
+            console = Console()
+
+            table = Table(title="Animais Encontrados")
+
+            table.add_column("ID")
+            table.add_column("Nome")
+            table.add_column("Raça")
+            table.add_column("Tipo")
+            table.add_column("Status")
+
             for animal in cadastro["animais"]:
                 if animal["tipo"] == tipo:
-                    console = Console()
-
-                    table = Table(title="Animais Encontrados")
-
-                    table.add_column("ID")
-                    table.add_column("Nome")
-                    table.add_column("Raça")
-                    table.add_column("Tipo")
-                    table.add_column("Status")
-
-                    for animal in cadastro["animais"]:
-                        table.add_row(
-                            animal["id"],
-                            animal["nome"],
-                            animal["raça"],
-                            animal["tipo"],
-                            animal["status"],
-                        )
-
-                    console.print(table)
+                    table.add_row(
+                        animal["id"],
+                        animal["nome"],
+                        animal["raça"],
+                        animal["tipo"],
+                        animal["status"],
+                    )
                     animal_encontrado = True
-                    break
+
+            if animal_encontrado:
+                console.print(table)
             if not animal_encontrado:
                 print(f"Animais do tipo {tipo} não encontrados.")
         elif op == 3:
             status = input("Digite o status do animal que deseja buscar: ")
             animal_encontrado = False
+            console = Console()
+
+            table = Table(title="Animais Encontrados")
+
+            table.add_column("ID")
+            table.add_column("Nome")
+            table.add_column("Raça")
+            table.add_column("Tipo")
+            table.add_column("Status")
+
             for animal in cadastro["animais"]:
                 if animal["status"] == status:
-                    console = Console()
-
-                    table = Table(title="Animais Encontrados")
-
-                    table.add_column("ID")
-                    table.add_column("Nome")
-                    table.add_column("Raça")
-                    table.add_column("Tipo")
-                    table.add_column("Status")
-
-                    for animal in cadastro["animais"]:
-                        table.add_row(
-                            animal["id"],
-                            animal["nome"],
-                            animal["raça"],
-                            animal["tipo"],
-                            animal["status"],
-                        )
-
-                    console.print(table)
+                    table.add_row(
+                        animal["id"],
+                        animal["nome"],
+                        animal["raça"],
+                        animal["tipo"],
+                        animal["status"],
+                    )
                     animal_encontrado = True
-                    break
+
+            if animal_encontrado:
+                console.print(table)
             if not animal_encontrado:
                 print(f"Animais com status {status} não encontrados.")
         elif op == 4:
@@ -685,7 +680,6 @@ def exibir_animais(cadastro: dict, usuario_logado: dict):
                     )
 
                     animais_a_venda = True
-                    break
             if animais_a_venda:
                 console.print(table)
             if not animais_a_venda:
@@ -706,11 +700,12 @@ def exibir_animais(cadastro: dict, usuario_logado: dict):
                     animal["raça"],
                     animal["tipo"],
                     animal["status"],
-                    )
+                )
+                achou = True
             if achou:
                 console.print(table)
             else:
-                print('Nenhum animal cadastrado!')
+                print("Nenhum animal cadastrado!")
         elif op == 0:
             print("Saindo da busca...")
             sleep(1.6)
@@ -727,7 +722,7 @@ def editar_animal(cadastro: dict):
         if animal["id"] == id:
             console = Console()
 
-            table = Table(title="Animais Encontrados")
+            table = Table(title="Edição do Animal")
 
             table.add_column("ID")
             table.add_column("Nome")
@@ -748,9 +743,9 @@ def editar_animal(cadastro: dict):
                 "\n\nDigite os novos dados do animal (deixe em branco para manter o valor atual):"
             )
             nome = input("Nome: ")
-            idade = int(input("Idade: "))
+            idade = input("Idade: ")
             raça = input("Raça: ")
-            peso = float(input("Peso: "))
+            peso = input("Peso: ")
             tipo = input("Tipo: ")
             genero = input("Gênero: ")
             status = input("Status: ")
@@ -764,11 +759,11 @@ def editar_animal(cadastro: dict):
             if nome:
                 animal["nome"] = nome
             if idade:
-                animal["idade"] = idade
+                animal["idade"] = int(idade)
             if raça:
                 animal["raça"] = raça
             if peso:
-                animal["peso"] = peso
+                animal["peso"] = float(peso)
             if tipo:
                 animal["tipo"] = tipo
             if genero:
@@ -779,7 +774,7 @@ def editar_animal(cadastro: dict):
 
             console = Console()
 
-            table = Table(title="Animais Encontrados")
+            table = Table(title="Edição do Animal")
 
             table.add_column("ID")
             table.add_column("Nome")
@@ -804,8 +799,8 @@ def excluir_animal(cadastro: dict):
     for animal in cadastro["animais"]:
         if animal["id"] == id:
             print(f"Você tem certeza que deseja excluir o animal ID {id}? (S/N)")
-           
-            print("[bold blue]->[/]" , end='')
+
+            print("[bold blue]->[/]", end="")
             confirmacao = input(" ")
             if confirmacao == "S":
                 cadastro["animais"].remove(animal)
@@ -828,7 +823,7 @@ def permitir_pedidos(pedido_de_compra: dict, usuario_logado: dict):
             "3 - Visualizar Pedidos Recusados\n"
             "0 - Sair"
         )
-        print("[bold blue]->[/]" , end='')
+        print("[bold blue]->[/]", end="")
         op = int(input(" "))
         if op > 3 or op < 0:
             print("Opção Inválida!")
@@ -847,7 +842,7 @@ def permitir_pedidos(pedido_de_compra: dict, usuario_logado: dict):
             table.add_column("QUANTIDADE")
             table.add_column("STATUS")
             table.add_column("CRIADO EM")
-            
+
             for indice, pedido in enumerate(pedido_de_compra["pedidos"]):
 
                 if pedido["status_pedido"] == "Aguardo":
@@ -855,8 +850,6 @@ def permitir_pedidos(pedido_de_compra: dict, usuario_logado: dict):
                     pedidos_aguardo.append(indice)
 
                     data = pedido["criado_em"][0]
-
-                    
 
                     table.add_row(
                         str(pedido["item_id"]),
@@ -866,8 +859,8 @@ def permitir_pedidos(pedido_de_compra: dict, usuario_logado: dict):
                         pedido["status_pedido"],
                         f"{str(data['ano']).zfill(2)}/{str(data['mes']).zfill(2)}/{str(data['dia']).zfill(2)}",
                     )
-                    
-            if len(pedidos_aguardo)!= 0:
+
+            if len(pedidos_aguardo) != 0:
                 console.print(table)
             if len(pedidos_aguardo) == 0:
                 print("Não há pedidos aguardando aprovação.")
@@ -882,7 +875,7 @@ def permitir_pedidos(pedido_de_compra: dict, usuario_logado: dict):
             indice_real = pedidos_aguardo[escolha]
 
             print("\n1 - Confirmar Pedido\n" "2 - Recusar Pedido\n" "0 - Cancelar")
-            print("[bold blue]->[/]" , end='')
+            print("[bold blue]->[/]", end="")
             decisao = int(input(" "))
 
             if decisao == 1:
@@ -926,10 +919,10 @@ def permitir_pedidos(pedido_de_compra: dict, usuario_logado: dict):
             if achou:
                 console.print(table)
             else:
-                print('Pedido não achado ou inexistente')
+                print("Pedido não achado ou inexistente")
         elif op == 3:
             console = Console()
-            table = Table(title="[bold italic]Pedidos Encontrados[/]")
+            table = Table(title="[bold italic]Pedidos Recusados[/]")
             table.add_column("ID")
             table.add_column("NOME")
             table.add_column("PRODUTO")
@@ -941,7 +934,6 @@ def permitir_pedidos(pedido_de_compra: dict, usuario_logado: dict):
                 if pedido["status_pedido"] == "Recusado":
                     data = pedido["criado_em"][0]
 
-                    
                     data = pedido["criado_em"][0]
                     table.add_row(
                         str(pedido["item_id"]),
@@ -955,5 +947,4 @@ def permitir_pedidos(pedido_de_compra: dict, usuario_logado: dict):
             if achou:
                 console.print(table)
             else:
-                print('Pedido não achado ou inexistente')
-                    
+                print("Pedido não achado ou inexistente")

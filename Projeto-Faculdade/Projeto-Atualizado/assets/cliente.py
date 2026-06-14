@@ -7,7 +7,6 @@ from rich.console import Console
 from rich import box
 
 
-
 def realizar_compra(cadastro: dict, usuario_logado: dict):
     menus.mostrar_cabecalho_tela("COMPRAR")
     print(f"O que você deseja comprar, {usuario_logado['nome']}?\n")
@@ -30,8 +29,16 @@ def realizar_compra(cadastro: dict, usuario_logado: dict):
         for animal in cadastro["animais"]:
             if animal["id"] == id:
                 if animal["preco"] != "Indisponivel":
-                    table.add_row(str(animal["id"]) , animal["nome"] , animal["raça"] , animal["tipo"] , str(animal["preco"]) , animal["status"])
-                    
+                    table.add_row(
+                        str(animal["id"]),
+                        animal["nome"],
+                        animal["raça"],
+                        animal["tipo"],
+                        str(animal["preco"]),
+                        animal["status"],
+                    )
+                    console.print(table)
+
                     print("Deseja confirmar a compra? (S/N)")
                     confirmacao = input("-> ").upper()
                     if confirmacao == "S":
@@ -62,7 +69,13 @@ def realizar_compra(cadastro: dict, usuario_logado: dict):
         for produto in cadastro["produtos"]:
             if produto["id"] == id:
                 if produto["status"] != "Indisponivel" and produto["quantidade"] != 0:
-                    table.add_row(str(produto["id"]), produto["nome"], str(produto["quantidade"]) , str(produto["preco"]) , produto["status"])
+                    table.add_row(
+                        str(produto["id"]),
+                        produto["nome"],
+                        str(produto["quantidade"]),
+                        str(produto["preco"]),
+                        produto["status"],
+                    )
                     console.print(table)
                     print("Deseja confirmar a compra? (S/N)")
                     confirmacao = input("-> ").upper()
@@ -120,10 +133,15 @@ def vizualizar_estoque(cadastro: dict, usuario_logado: dict):
             for animal in cadastro["animais"]:
                 if animal["preco"] != "Indisponivel":
 
-                    table.add_row(str(animal["id"]) , animal["nome"] , animal["raça"] , animal["tipo"] , str(animal["preco"]) , animal["status"])
+                    table.add_row(
+                        str(animal["id"]),
+                        animal["nome"],
+                        animal["raça"],
+                        animal["tipo"],
+                        str(animal["preco"]),
+                        animal["status"],
+                    )
 
-
-                   
                     animal_a_venda = True
             if animal_a_venda:
                 console.print(table)
@@ -145,8 +163,14 @@ def vizualizar_estoque(cadastro: dict, usuario_logado: dict):
         if cadastro["produtos"]:
             for produto in cadastro["produtos"]:
                 if produto["status"] != "Indisponivel" and produto["quantidade"] != 0:
-                    table.add_row(str(produto["id"]), produto["nome"], str(produto["quantidade"]) , str(produto["preco"]) , produto["status"])
-                    
+                    table.add_row(
+                        str(produto["id"]),
+                        produto["nome"],
+                        str(produto["quantidade"]),
+                        str(produto["preco"]),
+                        produto["status"],
+                    )
+
                     produto_disponivel = True
             if produto_disponivel:
                 console.print(table)
@@ -176,15 +200,22 @@ def agendar_retirada(cadastro: dict, usuario_logado: dict, agendamento: dict):
             table.add_column("ID")
             table.add_column("NOME")
             table.add_column("RAÇA")
-            table.add_column("QUANTIDADE")
+            table.add_column("PESO")
             table.add_column("PREÇO")
             table.add_column("STATUS")
 
             for animal in cadastro["animais"]:
                 if animal["id"] == item_id and animal["preco"]:
 
-                    table.add_row(str(animal["id"]) , animal["nome"] , animal["raça"], str(animal["quantidade"]), str(animal["preco"]), animal["status"])  
-                    
+                    table.add_row(
+                        str(animal["id"]),
+                        animal["nome"],
+                        animal["raça"],
+                        str(animal["peso"]),
+                        str(animal["preco"]),
+                        animal["status"],
+                    )
+
                     animal_encontrado = True
                     animal_nome = animal["nome"]
                     break
@@ -270,7 +301,7 @@ def agendar_retirada(cadastro: dict, usuario_logado: dict, agendamento: dict):
                             continue
 
                         data = f"{ano}-{mes}-{dia}"
-                        hora_data = {hora} - {minuto}
+                        hora_data = f"{hora}:{minuto}"
 
                         break
 
@@ -295,12 +326,14 @@ def agendar_retirada(cadastro: dict, usuario_logado: dict, agendamento: dict):
         elif op == 2:
             nome_cliente = usuario_logado["nome"]
             tipo = "Produto"
-            item_id = input("Digite o ID do animal que deseja agendar a retirada: ")
+            item_id = int(
+                input("Digite o ID do produto que deseja agendar a retirada: ")
+            )
             produto_encontrado = False
             produto_nome = ""
 
             console = Console()
-            table = Table(title="Retirada de Animal")
+            table = Table(title="Retirada de Produto")
             table.add_column("ID")
             table.add_column("NOME")
             table.add_column("QUANTIDADE")
@@ -310,7 +343,13 @@ def agendar_retirada(cadastro: dict, usuario_logado: dict, agendamento: dict):
             for produto in cadastro["produtos"]:
                 if produto["id"] == item_id and produto["preco"]:
 
-                    table.add_row(str(produto["id"]), produto["nome"], str(produto["quantidade"]) , str(produto["preco"]) , produto["status"])
+                    table.add_row(
+                        str(produto["id"]),
+                        produto["nome"],
+                        str(produto["quantidade"]),
+                        str(produto["preco"]),
+                        produto["status"],
+                    )
 
                     produto_nome = produto["nome"]
                     produto_encontrado = True
@@ -335,7 +374,9 @@ def agendar_retirada(cadastro: dict, usuario_logado: dict, agendamento: dict):
                     print(f"O produto com ID {item_id} não existe")
                     return
                 if produto_encontrado:
-                    print("Deseja confirmar o agendamento da retirada desse produto? (S/N)")
+                    print(
+                        "Deseja confirmar o agendamento da retirada desse produto? (S/N)"
+                    )
                     confirmacao = input("-> ").upper()
                     if confirmacao != "S":
                         print("Agendamento cancelado.")
@@ -410,7 +451,7 @@ def agendar_retirada(cadastro: dict, usuario_logado: dict, agendamento: dict):
                             continue
 
                         data = f"{ano}-{mes}-{dia}"
-                        hora_data = {hora} - {minuto}
+                        hora_data = f"{hora}:{minuto}"
 
                         break
 
@@ -428,35 +469,46 @@ def agendar_retirada(cadastro: dict, usuario_logado: dict, agendamento: dict):
                         datetime.now().strftime("%H:%M:%S"),
                     ],
                 }
-                agendamento["produtos"].append(cadastro_agendamento)
+                agendamento["produto"].append(cadastro_agendamento)
                 print(
                     f"Retirada do produto ID {item_id} agendada para {data} às {hora_data}."
                 )
 
 
-def ver_agendamento(usuario_logado: dict, cadastro: dict, agendamento: dict):
+def ver_agendamento(usuario_logado: dict, agendamento: dict):
     while True:
         print(
             f"Olá , {usuario_logado['nome']} , Seus Agendamentos\n1 - Agendamento de Animais\n2 - Agendamento de Produtos\n0 - Sair"
         )
         op = int(input("-> "))
         encontrado = False
+        if op == 0:
+            break
         if op == 1:
             console = Console()
-            table = Table(title="[bold italic]Agendamento de Animais[/]")
+            table = Table(title="[bold italic]Ver Agendamento[/]")
             table.add_column("ID")
             table.add_column("NOME")
             table.add_column("TIPO")
-            table.add_column("QUANTIDADE")
+            table.add_column("HORA")
             table.add_column("DIA DA COLETA")
             table.add_column("STATUS")
             table.add_column("CRIADO EM")
-            for produto in agendamento["produto"]:
-                if produto["nome_cliente"] == usuario_logado["nome"]:
+            for animal in agendamento["animais"]:
+                if animal["nome_cliente"] == usuario_logado["nome"]:
 
-                    table.add_row(str(produto["item_id"]), produto["nome"] , produto["tipo"] , str(produto["quantidade"]) , produto["data"] , produto["status"] , produto["data_agendamento"][0]+' '+produto["data_agendamento"][1])
+                    table.add_row(
+                        str(animal["item_id"]),
+                        animal["nome"],
+                        animal["tipo"],
+                        animal["hora"],
+                        animal["data"],
+                        animal["status"],
+                        animal["data_agendamento"][0]
+                        + " "
+                        + animal["data_agendamento"][1],
+                    )
 
-                    
                     encontrado = True
             if encontrado:
                 console.print(table)
@@ -468,7 +520,7 @@ def ver_agendamento(usuario_logado: dict, cadastro: dict, agendamento: dict):
 
         if op == 2:
             console = Console()
-            table = Table(title="[bold italic]Agendamento de Animais[/]")
+            table = Table(title="[bold italic]Agendamento de Produtos[/]")
             table.add_column("ID")
             table.add_column("NOME")
             table.add_column("TIPO")
@@ -476,10 +528,20 @@ def ver_agendamento(usuario_logado: dict, cadastro: dict, agendamento: dict):
             table.add_column("DIA DA COLETA")
             table.add_column("STATUS")
             table.add_column("CRIADO EM")
-            for animal in agendamento["animais"]:
-                if animal["nome_cliente"] == usuario_logado["nome"]:
+            for produto in agendamento["produto"]:
+                if produto["nome_cliente"] == usuario_logado["nome"]:
 
-                    table.add_row(str(animal["item_id"]), animal["nome"] , animal["tipo"] , str(animal["quantidade"]) , animal["data"] , animal["status"] , animal["data_agendamento"][0]+' '+animal["data_agendamento"][1])
+                    table.add_row(
+                        str(produto["item_id"]),
+                        produto["nome"],
+                        produto["tipo"],
+                        str(produto["quantidade"]),
+                        produto["data"],
+                        produto["status"],
+                        produto["data_agendamento"][0]
+                        + " "
+                        + produto["data_agendamento"][1],
+                    )
 
                     encontrado = True
             if encontrado:
@@ -489,105 +551,107 @@ def ver_agendamento(usuario_logado: dict, cadastro: dict, agendamento: dict):
                     f"{usuario_logado['nome']} , agendamento não encontrado ou não existente"
                 )
 
-def pedido_de_compra(
-                pedido_de_compra: dict, usuario_logado: dict, cadastro: dict
-            ):
-                while True:
-                    print(
-                        f"Olá , {usuario_logado['nome']}! Deseja realizar um pedido de compra de um PRODUTO? ( S / N )"
+
+def pedido_de_compra(pedido_de_compra: dict, usuario_logado: dict, cadastro: dict):
+    while True:
+        print(
+            f"Olá , {usuario_logado['nome']}! Deseja realizar um pedido de compra de um PRODUTO? ( S / N )"
+        )
+        op = input("->").upper()
+        if op == "S":
+            print("Digite o ID do PRODUTO que deseja realizar um pedido")
+
+            print("[bold blue]->[/]", end="")
+            id = int(input(" "))
+
+            nome_produto = None
+            produto_id = None
+            quantidade = None
+
+            achado = False
+            console = Console()
+            table = Table(title="[bold italic]Produtos Encontrados[/]")
+            table.add_column("ID")
+            table.add_column("PRODUTO")
+            table.add_column("QUANTIDADE")
+            table.add_column("PREÇO")
+            table.add_column("STATUS")
+
+            for produto in cadastro["produtos"]:
+                if produto["id"] == id and produto["status"] != "Indisponivel":
+
+                    table.add_row(
+                        str(produto["id"]),
+                        produto["nome"],
+                        str(produto["quantidade"]),
+                        str(produto["preco"]),
+                        produto["status"],
                     )
-                    op = input("->").upper()
-                    if op == "S":
-                        print("Digite o ID do PRODUTO que deseja realizar um pedido")
-                        
-                        print("[bold blue]->[/]" , end='')
-                        id = int(input(" "))
 
-                        nome_produto = None
-                        produto_id = None
-                        quantidade = None
+                    nome_produto = produto["nome"]
+                    produto_id = produto["id"]
+                    quantidade = produto["quantidade"]
 
-                        achado = False
-                        console = Console()
-                        table = Table(title="[bold italic]Produtos Encontrados[/]")
-                        table.add_column("ID")
-                        table.add_column("PRODUTO")
-                        table.add_column("QUANTIDADE")
-                        table.add_column("PREÇO")
-                        table.add_column("STATUS")
-                        
-                        for produto in cadastro["produtos"]:
-                            if (
-                                produto["id"] == id
-                                and produto["status"] != "Indisponivel"
-                            ):
-                                
-                                table.add_row( str(produto['id']) , produto['nome'] , str(produto['quantidade']) , str(produto['preco']) , produto['status'] )
+                    achado = True
+                    break
 
-                                nome_produto = produto["nome"]
-                                produto_id = produto["id"]
-                                quantidade = produto["quantidade"]
+            if not achado:
+                print("Produto não disponível para venda ou sem estoque.")
+                break
+            if achado:
 
-                                achado = True
-                                break
-                        
-                        if not achado:
-                            print("Produto não disponível para venda ou sem estoque.")
-                            break
-                        if achado:
+                console.print(table)
 
-                            console.print(table)
+                quando_criado = [
+                    {
+                        "ano": datetime.now().year,
+                        "mes": datetime.now().month,
+                        "dia": datetime.now().day,
+                        "hora": datetime.now().hour,
+                        "minuto": datetime.now().minute,
+                    }
+                ]
+                pedido = {
+                    "nome_cliente": usuario_logado["nome"],
+                    "nome_produto": nome_produto,
+                    "item_id": produto_id,
+                    "status_pedido": "Aguardo",
+                    "criado_em": quando_criado,
+                    "quantidade": quantidade,
+                }
+                pedido_de_compra["pedidos"].append(pedido)
+        else:
+            print("Saindo...")
+            break
 
-                            quando_criado = [
-                                {
-                                    "ano": datetime.now().year,
-                                    "mes": datetime.now().month,
-                                    "dia": datetime.now().day,
-                                    "hora": datetime.now().hour,
-                                    "minuto": datetime.now().minute,
-                                }
-                            ]
-                            pedido = {
-                                "nome_cliente": usuario_logado["nome"],
-                                "nome_produto": nome_produto,
-                                "item_id": produto_id,
-                                "status_pedido": "Aguardo",
-                                "criado_em": quando_criado,
-                                "quantidade": quantidade,
-                            }
-                            pedido_de_compra["pedidos"].append(pedido)
-                    else:
-                        print("Saindo...")
-                        break
 
 def exibir_pedidos(pedidos: dict, usuario_logado: dict):
-                print(f"Olá , {usuario_logado['nome']} , Seus Pedidos:")
+    print(f"Olá , {usuario_logado['nome']} , Seus Pedidos:")
 
+    achado = False
 
-                achado = False
+    console = Console()
+    table = Table(title="[bold italic]Seus Pedidos[/]")
+    table.add_column("ID")
+    table.add_column("NOME")
+    table.add_column("QUANTIDADE")
+    table.add_column("STATUS")
+    table.add_column("CRIADO EM")
+    for pedido in pedidos["pedidos"]:
 
-                console = Console()
-                table = Table(title="[bold italic]Seus Pedidos[/]")
-                table.add_column("ID")
-                table.add_column("NOME")
-                table.add_column("QUANTIDADE")
-                table.add_column("STATUS")
-                table.add_column("CRIADO EM")
-                for pedido in pedidos["pedidos"]:
-                    
-                    if pedido["nome_cliente"] == usuario_logado["nome"]:
-                        data = pedido["criado_em"]
-                        table.add_row(str(pedido["item_id"]) , pedido["nome_produto"] , {str(pedido["quantidade"])}, pedido["status_pedido"] , f"{data['ano']}/{data['mes']}/{data['dia']}")
+        if pedido["nome_cliente"] == usuario_logado["nome"]:
+            data = pedido["criado_em"][0]
+            table.add_row(
+                str(pedido["item_id"]),
+                pedido["nome_produto"],
+                str(pedido["quantidade"]),
+                pedido["status_pedido"],
+                f"{data['ano']}/{data['mes']}/{data['dia']}",
+            )
 
-                        achado = True
+            achado = True
 
-                if achado:
-                    console.print(table)
-                if not achado:
-                    print('Nenhum Pedido Encontrado!')
-
-
-                        
-                if not achado:
-                    print(f'{usuario_logado["nome"]} , Nenhum Pedido Realizado!')
-                    return
+    if achado:
+        console.print(table)
+    if not achado:
+        print("Nenhum Pedido Encontrado!")
