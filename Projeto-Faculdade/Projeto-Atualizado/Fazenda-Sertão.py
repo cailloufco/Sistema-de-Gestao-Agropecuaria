@@ -8,11 +8,13 @@ import time
 from rich.progress import track
 
 
+
+
 import os
 
 from assets import acesso
 from assets import menus
-from assets import adm, cliente
+from assets import adm, cliente , relatorio
 
 print(
     Panel.fit(
@@ -41,6 +43,19 @@ cadastro = {
         {
             "id": "00123-A",
             "nome": "Belinha",
+            "idade": 3,
+            "raça": "Nelore",
+            "peso": 324,
+            "tipo": "Vaca",
+            "genero": "F",
+            "preco": 3.370,
+            "status": "Doente",
+            "ano": "2023",
+            "lote": "A",
+        },
+        {
+            "id": "00223-A",
+            "nome": "Francisca",
             "idade": 3,
             "raça": "Nelore",
             "peso": 324,
@@ -91,6 +106,7 @@ pedido_de_compra = {
         }
     ]
 }
+registro_de_auditoria = []
 
 
 while True:
@@ -142,7 +158,7 @@ while True:
         menus.menu_adm(usuario_logado)
         op = int(input("-> "))
 
-        if op > 5 or op < 0:
+        if op > 6 or op < 0:
             print("Opção inválida. Tente novamente.\n")
             sleep(1)
             continue
@@ -205,7 +221,22 @@ while True:
 
         elif op == 5:
             adm.notificacoes(cadastro, usuario_logado)
+        
 
+        elif op == 6:
+            while True:
+                print("1 - Relatorio de Animais\n"
+                    "2 - Relatorio de Produtos\n"
+                    "3 - Registro de Auditoria\n"
+                    "0 - Sair")
+                print("[bold blue]->[/]", end="")
+                op = int(input(" "))
+                if op == 1:
+                    relatorio.gerar_relatorios_animais(cadastro)
+                elif op == 2:
+                    relatorio.gerar_relatorios_produtos(cadastro)
+                elif op == 3:
+                    print("")
         elif op == 0:
             usuario_logado = {"nome": None, "administrador": None, "logado": False}
             print("Deslogando...")

@@ -7,7 +7,7 @@ from rich.console import Console
 from rich import box
 
 
-def realizar_compra(cadastro: dict, usuario_logado: dict):
+def realizar_compra(cadastro: dict, usuario_logado: dict, registro_de_auditoria: list):
     menus.mostrar_cabecalho_tela("COMPRAR")
     print(f"O que você deseja comprar, {usuario_logado['nome']}?\n")
     print(" 1 - Comprar um animal")
@@ -44,6 +44,9 @@ def realizar_compra(cadastro: dict, usuario_logado: dict):
                     if confirmacao == "S":
                         cadastro["animais"].remove(animal)
                         print(f"Compra do animal ID [bold yellow]{id}[/] confirmada!")
+                        registro_de_auditoria(
+                            f'O cliente {usuario_logado["nome"]} , comprou o animal ID {id} ,  {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
+                        )
                         break
                     else:
                         print("Compra cancelada.")
@@ -99,6 +102,9 @@ def realizar_compra(cadastro: dict, usuario_logado: dict):
                             print(
                                 f"Compra de {quantidade_comprada} unidades do produto ID [bold yellow]{id}[/] confirmada!"
                             )
+                            registro_de_auditoria(
+                                f'O cliente {usuario_logado["nome"]} , comprou o produto ID: {id} - Quantia: {quantidade_comprada} ,  {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
+                            )
                             if produto["quantidade"] == 0:
                                 produto["status"] = "Indisponivel"
                             break
@@ -111,7 +117,9 @@ def realizar_compra(cadastro: dict, usuario_logado: dict):
             print(f"Produto ID [bold yellow]{id}[/] não encontrado.")
 
 
-def vizualizar_estoque(cadastro: dict, usuario_logado: dict):
+def vizualizar_estoque(
+    cadastro: dict, usuario_logado: dict, registro_de_auditoria: list
+):
     menus.mostrar_cabecalho_tela("ESTOQUE")
     print(f"O que você deseja ver, {usuario_logado['nome']}?\n")
     print(" 1 - Visualizar Estoque de Animais à Venda")
@@ -120,7 +128,7 @@ def vizualizar_estoque(cadastro: dict, usuario_logado: dict):
     print("=" * 60)
     op = int(input("-> "))
     if op == 1:
-        animal_a_venda = False
+        achou = False
         if cadastro["animais"]:
             console = Console()
             table = Table(title="Retirada de Animal")
@@ -142,10 +150,13 @@ def vizualizar_estoque(cadastro: dict, usuario_logado: dict):
                         animal["status"],
                     )
 
-                    animal_a_venda = True
-            if animal_a_venda:
+                    achou = True
+            if achou:
                 console.print(table)
-            if not animal_a_venda:
+                registro_de_auditoria(
+                    f'O cliente {usuario_logado["nome"]} , visualizou todos os animais a venda ,  {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
+                )
+            if not achou:
                 print("Nenhum animal disponível para venda encontrado.")
 
         else:
@@ -174,13 +185,18 @@ def vizualizar_estoque(cadastro: dict, usuario_logado: dict):
                     produto_disponivel = True
             if produto_disponivel:
                 console.print(table)
+                registro_de_auditoria(
+                    f'O cliente {usuario_logado["nome"]} , visualizou todos os produtos a venda ,  {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
+                )
             if not produto_disponivel:
                 print("Nenhum produto disponível para venda encontrado.")
         else:
             print("Nenhum produto cadastrado.")
 
 
-def agendar_retirada(cadastro: dict, usuario_logado: dict, agendamento: dict):
+def agendar_retirada(
+    cadastro: dict, usuario_logado: dict, agendamento: dict, registro_de_auditoria: list
+):
     while True:
         menus.mostrar_cabecalho_tela("AGENDAR RETIRADA")
         print(f"Agendar Retirada/Transporte, {usuario_logado['nome']}?\n")
@@ -322,7 +338,9 @@ def agendar_retirada(cadastro: dict, usuario_logado: dict, agendamento: dict):
                 print(
                     f"Retirada do animal ID {item_id} agendada para {data} às {hora_data}."
                 )
-
+                registro_de_auditoria.append(
+                    f'o cliente {usuario_logado["nome"]} agendou retirada às {datetime.now().strftime("%d/%m/%Y às %H:%M")} do animal {animal_nome}'
+                )
         elif op == 2:
             nome_cliente = usuario_logado["nome"]
             tipo = "Produto"
@@ -360,6 +378,7 @@ def agendar_retirada(cadastro: dict, usuario_logado: dict, agendamento: dict):
                 print("Quantos Quilogramas ou Litros você deseja retirar? ")
                 quantia = float(input("->"))
                 produto_encontrado = False
+                nome_produto = ""
                 for produto in cadastro["produtos"]:
                     if produto["id"] == item_id:
                         if quantia > produto["quantidade"]:
@@ -368,6 +387,7 @@ def agendar_retirada(cadastro: dict, usuario_logado: dict, agendamento: dict):
                                 f"Quantidade solicitada ({quantia}) excede o estoque disponível ({produto['quantidade']})."
                             )
                         produto_encontrado = True
+                        nome_produto = produto["nome"]
                         break
 
                 if not produto_encontrado:
@@ -381,6 +401,7 @@ def agendar_retirada(cadastro: dict, usuario_logado: dict, agendamento: dict):
                     if confirmacao != "S":
                         print("Agendamento cancelado.")
                         continue
+
                 while True:
 
                     dia = int(input("-> "))
@@ -473,9 +494,14 @@ def agendar_retirada(cadastro: dict, usuario_logado: dict, agendamento: dict):
                 print(
                     f"Retirada do produto ID {item_id} agendada para {data} às {hora_data}."
                 )
+                registro_de_auditoria.append(
+                    f'o cliente {usuario_logado["nome"]} agendou retirada às {datetime.now().strftime("%d/%m/%Y às %H:%M")} do produto {nome_produto}'
+                )
 
 
-def ver_agendamento(usuario_logado: dict, agendamento: dict):
+def ver_agendamento(
+    usuario_logado: dict, agendamento: dict, registro_de_auditoria: list
+):
     while True:
         print(
             f"Olá , {usuario_logado['nome']} , Seus Agendamentos\n1 - Agendamento de Animais\n2 - Agendamento de Produtos\n0 - Sair"
@@ -512,6 +538,9 @@ def ver_agendamento(usuario_logado: dict, agendamento: dict):
                     encontrado = True
             if encontrado:
                 console.print(table)
+                registro_de_auditoria.append(
+                    f'o cliente {usuario_logado["nome"]} procurou por seus agendamentos às {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
+                )
             if not encontrado:
                 print(
                     f"{usuario_logado['nome']} , agendamento não encontrado ou não existente"
@@ -546,13 +575,21 @@ def ver_agendamento(usuario_logado: dict, agendamento: dict):
                     encontrado = True
             if encontrado:
                 console.print(table)
+                registro_de_auditoria.append(
+                    f'o cliente {usuario_logado["nome"]} procurou por seus agendamentos às {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
+                )
             if not encontrado:
                 print(
                     f"{usuario_logado['nome']} , agendamento não encontrado ou não existente"
                 )
 
 
-def pedido_de_compra(pedido_de_compra: dict, usuario_logado: dict, cadastro: dict):
+def pedido_de_compra(
+    pedido_de_compra: dict,
+    usuario_logado: dict,
+    cadastro: dict,
+    registro_de_auditoria: list,
+):
     while True:
         print(
             f"Olá , {usuario_logado['nome']}! Deseja realizar um pedido de compra de um PRODUTO? ( S / N )"
@@ -620,12 +657,17 @@ def pedido_de_compra(pedido_de_compra: dict, usuario_logado: dict, cadastro: dic
                     "quantidade": quantidade,
                 }
                 pedido_de_compra["pedidos"].append(pedido)
+
+                registro_de_auditoria.append(
+                    f'o cliente {usuario_logado["nome"]} criou um pedido de compra às {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
+                )
+
         else:
             print("Saindo...")
             break
 
 
-def exibir_pedidos(pedidos: dict, usuario_logado: dict):
+def exibir_pedidos(pedidos: dict, usuario_logado: dict, registro_de_auditoria):
     print(f"Olá , {usuario_logado['nome']} , Seus Pedidos:")
 
     achado = False
@@ -653,5 +695,8 @@ def exibir_pedidos(pedidos: dict, usuario_logado: dict):
 
     if achado:
         console.print(table)
+        registro_de_auditoria.append(
+            f'o cliente {usuario_logado["nome"]}exibiu seus pedidos de compra às {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
+        )
     if not achado:
         print("Nenhum Pedido Encontrado!")

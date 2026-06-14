@@ -10,7 +10,9 @@ from rich.console import Console
 from rich import box
 
 
-def cadastrar_produto(cadastro: dict):
+def cadastrar_produto(
+    cadastro: dict, registro_de_auditoria: list, usuario_logado: dict
+):
     while True:
         ids_existentes = [produto["id"] for produto in cadastro["produtos"]]
         id = max(ids_existentes) + 1
@@ -22,10 +24,11 @@ def cadastrar_produto(cadastro: dict):
         print("[bold blue]->[/]", end="")
         op = input(" ").upper()
         if op == "S":
+            status = "Disponível"
             preco = float(input("Preço: "))
         else:
-            preco = "Indisponivel"
-        status = input("Status: ")
+            preco = float(input("Preço: "))
+            status = "Indisponivel"
 
         produto = {
             "id": id,
@@ -37,13 +40,17 @@ def cadastrar_produto(cadastro: dict):
         cadastro["produtos"].append(produto)
         print(f"Produto ID [bold yellow]{id}[/] cadastrado com sucesso!")
 
+        registro_de_auditoria.append(
+            f"O produto {id} foi cadastrado por {usuario_logado["nome"]} {datetime.now().strftime("%d/%m/%Y às %H:%M")}"
+        )
+
         print("Deseja cadastrar outro produto? ( S - N )" "\n[bold blue]->[/]", end="")
         escolha = input(" ").upper()
         if escolha != "S":
             break
 
 
-def buscar_produto(cadastro: dict, usuario_logado: dict):
+def buscar_produto(cadastro: dict, usuario_logado: dict, registro_de_auditoria: list):
     while True:
         menus.mostrar_cabecalho_tela("BUSCA DE PRODUTOS")
         print(f"O que você deseja buscar, {usuario_logado['nome']}?\n")
@@ -81,6 +88,11 @@ def buscar_produto(cadastro: dict, usuario_logado: dict):
                     )
                     console.print(table)
                     achou = True
+
+                    registro_de_auditoria.append(
+                        f"O usuário {usuario_logado["nome"]} buscou pelo produto ID {produto["id"]} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}"
+                    )
+
                     break
 
             else:
@@ -108,7 +120,9 @@ def buscar_produto(cadastro: dict, usuario_logado: dict):
                     )
                     console.print(table)
                     produto_encontrado = True
-
+                    registro_de_auditoria.append(
+                        f"O usuario {usuario_logado["nome"]} buscou pelo produto de nome {produto["nome"]} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}"
+                    )
             if not produto_encontrado:
                 print(
                     f"Produto com nome [bold yellow]{nome}[/] [red]NÃO[/] encontrados."
@@ -138,6 +152,9 @@ def buscar_produto(cadastro: dict, usuario_logado: dict):
 
                     produto_encontrado = True
             if produto_encontrado:
+                registro_de_auditoria.append(
+                    f'O usuario {usuario_logado["nome"]} pesquisou pelo produto com status "{status}" , {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
+                )
                 console.print(table)
 
             if not produto_encontrado:
@@ -165,6 +182,9 @@ def buscar_produto(cadastro: dict, usuario_logado: dict):
                     )
                     console.print(table)
                     produtos_disponiveis = True
+            registro_de_auditoria.append(
+                f'O usuario {usuario_logado["nome"]} buscou todos os produtos Indisponíveis , {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
+            )
             if not produtos_disponiveis:
                 print("[red]Nenhum[/] produto disponível para venda encontrado.")
 
@@ -196,7 +216,9 @@ def buscar_produto(cadastro: dict, usuario_logado: dict):
             print("[bold red]Opção inválida.[/]")
 
 
-def atualizar_produto(cadastro: dict):
+def atualizar_produto(
+    cadastro: dict, usuario_logado: dict, registro_de_auditoria: list
+):
     id = int(input("Digite o [bold]ID[/] do produto que deseja atualizar: "))
     for produto in cadastro["produtos"]:
         if produto["id"] == id:
@@ -263,9 +285,12 @@ def atualizar_produto(cadastro: dict):
             console.print(table)
 
             print(f"Produto ID [bold yellow]{id}[/] atualizado com sucesso!")
+            registro_de_auditoria.append(
+                f'O usuario {usuario_logado["nome"]} atualizou o produto ID {id} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
+            )
 
 
-def remover_produto(cadastro: dict):
+def remover_produto(cadastro: dict, usuario_logado: dict, registro_de_auditoria: list):
     id = int(input("Digite o ID do produto que deseja [bold]remover[/]: "))
     for produto in cadastro["produtos"]:
         if produto["id"] == id:
@@ -300,6 +325,9 @@ def remover_produto(cadastro: dict):
                 print(
                     f"Produto ID [bold yellow]{id} [italic red]removido[/] com sucesso!"
                 )
+                registro_de_auditoria.append(
+                    f'o usuario {usuario_logado["nome"]} removeu o produto ID {id} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
+                )
                 break
 
             else:
@@ -309,7 +337,7 @@ def remover_produto(cadastro: dict):
         print(f"Produto ID [bold yellow]{id}[/] [red]NÃO[/] encontrado.")
 
 
-def cadastrar_racao(cadastro: dict, usuario_logado: dict):
+def cadastrar_racao(cadastro: dict, usuario_logado: dict, registro_de_auditoria: list):
     while True:
         menus.mostrar_cabecalho_tela("GERENCIAR RAÇÃO")
         print(f"Gerenciar Ração, {usuario_logado['nome']}?\n")
@@ -354,6 +382,9 @@ def cadastrar_racao(cadastro: dict, usuario_logado: dict):
             print(
                 f"Ração ID [bold yellow]{id}[/] [italic green]cadastrada com sucesso!"
             )
+            registro_de_auditoria.append(
+                f'O usuario {usuario_logado["nome"]} cadastrou a ração de ID {id} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
+            )
 
         elif op == 2:
             achou = False
@@ -362,6 +393,9 @@ def cadastrar_racao(cadastro: dict, usuario_logado: dict):
                     f"ID: {racao['id']} | Nome: {racao['nome']} | Quantidade: {racao['quantidade']} | Limiar: {racao['limiar_de_estoque']} | Função: {racao['funcao']}"
                 )
                 achou = True
+            registro_de_auditoria.append(
+                f'O usuario {usuario_logado["nome"]} buscou por todas as rações cadastradas no estoque , {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
+            )
             if not achou:
                 print("Nenhuma ração cadastrada")
                 sleep(1.6)
@@ -373,10 +407,23 @@ def cadastrar_racao(cadastro: dict, usuario_logado: dict):
             print("[bold blue]->[/]", end="")
             id = int(input(" "))
             for racao in cadastro["racao"]:
+                console = Console()
+                table = Table(title="[bold italic]Atualizar Ração[/]")
+                table.add_column("ID")
+                table.add_column("NOME")
+                table.add_column("QUANTIDADE")
+                table.add_column("LIMIAR")
+                table.add_column("FUNÇÃO")
                 if racao["id"] == id:
-                    print(
-                        f"ID: {racao['id']} | Nome: {racao['nome']} | Quantidade: {racao['quantidade']} | Limiar: {racao['limiar_de_estoque']} | Função: {racao['funcao']}"
+
+                    table.add_row(
+                        str(racao["id"]),
+                        racao["nome"],
+                        str(racao["quantidade"]),
+                        str(racao["limiar_de_estoque"]),
+                        racao["funcao"],
                     )
+
                     print(
                         "Digite os novos dados do produto (deixe em branco para manter o valor atual):"
                     )
@@ -395,12 +442,15 @@ def cadastrar_racao(cadastro: dict, usuario_logado: dict):
                         racao["limiar_de_estoque"] = float(limiar)
 
                     print(f"Produto ID {id} atualizado com sucesso!")
+                    registro_de_auditoria(
+                        f'O usuario {usuario_logado["nome"]} atualizou a ração de ID {id} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
+                    )
         elif op == 0:
             print("Encerrando...")
             break
 
 
-def notificacoes(cadastro: dict, usuario_logado: dict):
+def notificacoes(cadastro: dict, usuario_logado: dict, registro_de_auditoria: list):
     menus.mostrar_cabecalho_tela("NOTIFICAÇÕES")
     print(f"Notificações, {usuario_logado['nome']}?\n")
     print(" 1 - Animais doentes")
@@ -439,9 +489,14 @@ def notificacoes(cadastro: dict, usuario_logado: dict):
                 animais_doentes = True
         if animais_doentes:
             console.print(table)
+            registro_de_auditoria.append(
+                f'o usuario {usuario_logado["nome"]} entrou nas notificações , {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
+            )
         if not animais_doentes:
             print("Nenhum animal doente encontrado.")
-
+            registro_de_auditoria.append(
+                f'o usuario {usuario_logado["nome"]} entrou nas notificações , {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
+            )
     elif op == 2:
         racao_baixo_estoque = False
         console = Console()
@@ -465,8 +520,14 @@ def notificacoes(cadastro: dict, usuario_logado: dict):
                 racao_baixo_estoque = True
         if racao_baixo_estoque:
             console.print(table)
+            registro_de_auditoria.append(
+                f'o usuario {usuario_logado["nome"]} entrou nas notificações , {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
+            )
         if not racao_baixo_estoque:
             print("Nenhuma ração com estoque abaixo do limiar encontrada.")
+            registro_de_auditoria.append(
+                f'o usuario {usuario_logado["nome"]} entrou nas notificações , {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
+            )
 
 
 def exibir_menu_de_gerenciar_rebanho():
@@ -475,7 +536,7 @@ def exibir_menu_de_gerenciar_rebanho():
     )
 
 
-def cadastrar_animal(cadastro: dict):
+def cadastrar_animal(cadastro: dict, usuario_logado: dict, registro_de_auditoria: list):
 
     while True:
 
@@ -530,7 +591,9 @@ def cadastrar_animal(cadastro: dict):
         )
 
         print("\nAnimal cadastrado com sucesso!")
-
+        registro_de_auditoria.append(
+            f'o usuario {usuario_logado["nome"]} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
+        )
         console = Console()
 
         table = Table(title="[bold italic]Cadastrar Animal[/]")
@@ -562,7 +625,7 @@ def cadastrar_animal(cadastro: dict):
             break
 
 
-def exibir_animais(cadastro: dict, usuario_logado: dict):
+def exibir_animais(cadastro: dict, usuario_logado: dict, registro_de_auditoria: list):
     while True:
         menus.mostrar_cabecalho_tela("VISUALIZAR ANIMAIS")
         print(f"Qual animal você deseja visualizar, {usuario_logado['nome']}?\n")
@@ -600,6 +663,9 @@ def exibir_animais(cadastro: dict, usuario_logado: dict):
                     )
 
                     console.print(table)
+                    registro_de_auditoria.append(
+                        f"o usuario {usuario_logado["nome"]} buscou pelo animal ID {id} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}"
+                    )
                     break
             else:
                 print(f"Animal ID {id} não encontrado.")
@@ -629,6 +695,9 @@ def exibir_animais(cadastro: dict, usuario_logado: dict):
 
             if animal_encontrado:
                 console.print(table)
+                registro_de_auditoria.append(
+                    f"o usuario {usuario_logado["nome"]} buscou pelo animal do tipo: {tipo} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}"
+                )
             if not animal_encontrado:
                 print(f"Animais do tipo {tipo} não encontrados.")
         elif op == 3:
@@ -656,6 +725,9 @@ def exibir_animais(cadastro: dict, usuario_logado: dict):
                     animal_encontrado = True
 
             if animal_encontrado:
+                registro_de_auditoria.append(
+                    f"o usuario {usuario_logado["nome"]} buscou pelo animal com o status: {status} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}"
+                )
                 console.print(table)
             if not animal_encontrado:
                 print(f"Animais com status {status} não encontrados.")
@@ -682,6 +754,9 @@ def exibir_animais(cadastro: dict, usuario_logado: dict):
                     animais_a_venda = True
             if animais_a_venda:
                 console.print(table)
+                registro_de_auditoria.append(
+                    f"o usuario {usuario_logado["nome"]} buscou pelos animais que estão a venda , {datetime.now().strftime("%d/%m/%Y às %H:%M")}"
+                )
             if not animais_a_venda:
                 print("Nenhum animal disponível para venda encontrado.")
         elif op == 5:
@@ -704,6 +779,9 @@ def exibir_animais(cadastro: dict, usuario_logado: dict):
                 achou = True
             if achou:
                 console.print(table)
+                registro_de_auditoria.append(
+                    f"o usuario {usuario_logado["nome"]} buscou por todos os animais cadastrados , {datetime.now().strftime("%d/%m/%Y às %H:%M")}"
+                )
             else:
                 print("Nenhum animal cadastrado!")
         elif op == 0:
@@ -716,7 +794,7 @@ def exibir_animais(cadastro: dict, usuario_logado: dict):
             continue
 
 
-def editar_animal(cadastro: dict):
+def editar_animal(cadastro: dict, usuario_logado: dict, registro_de_auditoria: list):
     id = input("Digite o ID do animal que deseja editar: ")
     for animal in cadastro["animais"]:
         if animal["id"] == id:
@@ -792,9 +870,12 @@ def editar_animal(cadastro: dict):
             console.print(table)
 
             print(f"Animal ID {id} atualizado com sucesso!")
+            registro_de_auditoria.append(
+                f"o usuario {usuario_logado["nome"]} editou o animal com ID {id} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}"
+            )
 
 
-def excluir_animal(cadastro: dict):
+def excluir_animal(cadastro: dict, usuario_logado: dict, registro_de_auditoria: list):
     id = input("Qual animal deseja excluir? (Digite o ID): ")
     for animal in cadastro["animais"]:
         if animal["id"] == id:
@@ -805,7 +886,11 @@ def excluir_animal(cadastro: dict):
             if confirmacao == "S":
                 cadastro["animais"].remove(animal)
                 print(f"Animal ID {id} excluído com sucesso!")
+                registro_de_auditoria.append(
+                    f"o usuario {usuario_logado["nome"]} excluiu o animal com ID {id} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}"
+                )
                 break
+
             else:
                 print("Exclusão cancelada.")
                 break
@@ -813,7 +898,9 @@ def excluir_animal(cadastro: dict):
         print(f"Animal ID {id} não encontrado.")
 
 
-def permitir_pedidos(pedido_de_compra: dict, usuario_logado: dict):
+def permitir_pedidos(
+    pedido_de_compra: dict, usuario_logado: dict, registro_de_auditoria: list
+):
     while True:
         menus.mostrar_cabecalho_tela("PEDIDOS DE COMPRA")
         print(f"Que pedido deseja visualizar, {usuario_logado['nome']}?")
@@ -881,11 +968,17 @@ def permitir_pedidos(pedido_de_compra: dict, usuario_logado: dict):
             if decisao == 1:
                 pedido_de_compra["pedidos"][indice_real]["status_pedido"] = "Confirmado"
                 print("Pedido confirmado com sucesso!")
+                registro_de_auditoria.append(
+                    f"o usuario {usuario_logado["nome"]} permitiu o pedido de {pedido['nome_cliente']} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}"
+                )
                 continue
 
             elif decisao == 2:
                 pedido_de_compra["pedidos"][indice_real]["status_pedido"] = "Recusado"
                 print("Pedido recusado com sucesso!")
+                registro_de_auditoria.append(
+                    f"o usuario {usuario_logado["nome"]} permitiu o recusou de {pedido['nome_cliente']} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}"
+                )
                 continue
 
             elif decisao == 0:
@@ -917,6 +1010,9 @@ def permitir_pedidos(pedido_de_compra: dict, usuario_logado: dict):
                     )
                     achou = True
             if achou:
+                registro_de_auditoria.append(
+                    f"o usuario {usuario_logado["nome"]} visualizou os pedidos CONFIMADOS , {datetime.now().strftime("%d/%m/%Y às %H:%M")}"
+                )
                 console.print(table)
             else:
                 print("Pedido não achado ou inexistente")
@@ -946,5 +1042,8 @@ def permitir_pedidos(pedido_de_compra: dict, usuario_logado: dict):
                     achou = True
             if achou:
                 console.print(table)
+                registro_de_auditoria.append(
+                    f"o usuario {usuario_logado["nome"]} visualizou os pedidos RECUSADO , {datetime.now().strftime("%d/%m/%Y às %H:%M")}"
+                )
             else:
                 print("Pedido não achado ou inexistente")

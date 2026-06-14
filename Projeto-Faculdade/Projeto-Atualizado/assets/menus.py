@@ -12,6 +12,7 @@ def menu_adm(usuario_logado: dict):
     print(" 3 - Gerenciar Estoque de Ração")
     print(" 4 - Visualizar Pedidos de Compra")
     print(" 5 - Notificações")
+    print(" 6 - Relatorios")
     print(" 0 - Menu de Cadastro")
     print("=" * 60)
 
