@@ -15,6 +15,7 @@ from rich import box
 
 from time import sleep
 
+
 def gerar_relatorios_animais(cadastro: dict):
 
     pdf = SimpleDocTemplate("relatorio_animais.pdf")
@@ -152,8 +153,7 @@ def registro_de_auditoria(registro_de_auditoria: list):
 
     console = Console()
     tabelaRich = tabelinha(title="[italic bold]Registro de Auditoria[/]")
-    tabelaRich.add_column("Registro" , justify="center")
-
+    tabelaRich.add_column("Registro", justify="center")
 
     """
      "id": 1,
@@ -166,13 +166,9 @@ def registro_de_auditoria(registro_de_auditoria: list):
         print("Nenhum Registro Capturado...")
         return
     for registro in registro_de_auditoria:
-        dado = [
-            registro
-        ]
+        dado = [registro]
         tabelaRich.add_row(registro)
         dados.append(dado)
-    
-    
 
     tabela = Table(dados)
     tabela.hAlign = "LEFT"
@@ -192,15 +188,13 @@ def registro_de_auditoria(registro_de_auditoria: list):
 
     conteudo.append(tabela)
 
-
     console.print(tabelaRich)
 
     print("Você deseja o PDF do Registro de Auditoria? ( S - N )")
-    op = input('->').upper()
+    op = input("->").upper()
 
     if op == "S":
         pdf.build(conteudo)
 
         print("[bold italic light_green]Registro de Auditoria Gerado ![/]")
         sleep(1.2)
-

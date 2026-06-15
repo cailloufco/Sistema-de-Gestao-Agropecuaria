@@ -174,19 +174,21 @@ while True:
                 elif op1 == 0:
                     break
                 elif op1 == 1:
-                    adm.cadastrar_animal(cadastro, usuario_logado , registro_de_auditoria)
+                    adm.cadastrar_animal(
+                        cadastro, usuario_logado, registro_de_auditoria
+                    )
 
                 elif op1 == 2:
 
-                    adm.exibir_animais(cadastro, usuario_logado , registro_de_auditoria)
+                    adm.exibir_animais(cadastro, usuario_logado, registro_de_auditoria)
 
                 elif op1 == 3:
 
-                    adm.editar_animal(cadastro , usuario_logado , registro_de_auditoria)
+                    adm.editar_animal(cadastro, usuario_logado, registro_de_auditoria)
 
                 elif op1 == 4:
 
-                    adm.excluir_animal(cadastro , usuario_logado ,registro_de_auditoria)
+                    adm.excluir_animal(cadastro, usuario_logado, registro_de_auditoria)
 
         elif op == 2:
             menus.mostrar_cabecalho_tela("PRODUÇÃO E DERIVADOS")
@@ -198,27 +200,29 @@ while True:
             print("=" * 60)
             op1 = int(input("\n-> "))
             if op1 == 1:
-                adm.cadastrar_produto(cadastro , registro_de_auditoria, usuario_logado)
+                adm.cadastrar_produto(cadastro, registro_de_auditoria, usuario_logado)
 
             elif op1 == 2:
-                adm.buscar_produto(cadastro, usuario_logado , registro_de_auditoria)
+                adm.buscar_produto(cadastro, usuario_logado, registro_de_auditoria)
 
             elif op1 == 3:
-                adm.atualizar_produto(cadastro , usuario_logado ,registro_de_auditoria)
+                adm.atualizar_produto(cadastro, usuario_logado, registro_de_auditoria)
 
             elif op1 == 4:
-                adm.remover_produto(cadastro , usuario_logado ,registro_de_auditoria)
+                adm.remover_produto(cadastro, usuario_logado, registro_de_auditoria)
 
         elif op == 3:
 
-            adm.cadastrar_racao(cadastro, usuario_logado , registro_de_auditoria)
+            adm.cadastrar_racao(cadastro, usuario_logado, registro_de_auditoria)
 
         elif op == 4:
 
-            adm.permitir_pedidos(pedido_de_compra, usuario_logado , registro_de_auditoria)
+            adm.permitir_pedidos(
+                pedido_de_compra, usuario_logado, registro_de_auditoria
+            )
 
         elif op == 5:
-            adm.notificacoes(cadastro, usuario_logado , registro_de_auditoria)
+            adm.notificacoes(cadastro, usuario_logado, registro_de_auditoria)
 
         elif op == 6:
             while True:
@@ -252,23 +256,29 @@ while True:
             sleep(1)
             continue
         elif op == 1:
-            cliente.realizar_compra(cadastro, usuario_logado , registro_de_auditoria)
+            cliente.realizar_compra(cadastro, usuario_logado, registro_de_auditoria)
 
         elif op == 2:
-            cliente.vizualizar_estoque(cadastro, usuario_logado , registro_de_auditoria)
+            cliente.vizualizar_estoque(cadastro, usuario_logado, registro_de_auditoria)
 
         elif op == 3:
-            cliente.agendar_retirada(cadastro, usuario_logado, agendamento , registro_de_auditoria)
+            cliente.agendar_retirada(
+                cadastro, usuario_logado, agendamento, registro_de_auditoria
+            )
 
         elif op == 4:
-            cliente.ver_agendamento(usuario_logado, agendamento , registro_de_auditoria)
+            cliente.ver_agendamento(usuario_logado, agendamento, registro_de_auditoria)
 
         elif op == 5:
-            cliente.pedido_de_compra(pedido_de_compra, usuario_logado, cadastro , registro_de_auditoria)
+            cliente.pedido_de_compra(
+                pedido_de_compra, usuario_logado, cadastro, registro_de_auditoria
+            )
 
         elif op == 6:
 
-            cliente.exibir_pedidos(pedido_de_compra, usuario_logado , registro_de_auditoria)
+            cliente.exibir_pedidos(
+                pedido_de_compra, usuario_logado, registro_de_auditoria
+            )
 
         elif op == 0:
             print("Deslogando...")
