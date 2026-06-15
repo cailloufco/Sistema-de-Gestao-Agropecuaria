@@ -67,7 +67,6 @@ def gerar_relatorios_animais(cadastro: dict):
         TableStyle(
             [
                 ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-                # aumenta o espaço dentro das células
                 ("LEFTPADDING", (0, 0), (-1, -1), 15),
                 ("RIGHTPADDING", (0, 0), (-1, -1), 15),
                 ("TOPPADDING", (0, 0), (-1, -1), 8),
@@ -123,9 +122,8 @@ def gerar_relatorios_produtos(cadastro: dict):
     tabela.hAlign = "LEFT"
     tabela.setStyle(
         TableStyle(
-            [  # padding : 8, 15
+            [
                 ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-                # aumenta o espaço dentro das células
                 ("LEFTPADDING", (0, 0), (-1, -1), 15),
                 ("RIGHTPADDING", (0, 0), (-1, -1), 15),
                 ("TOPPADDING", (0, 0), (-1, -1), 8),
@@ -174,9 +172,8 @@ def registro_de_auditoria(registro_de_auditoria: list):
     tabela.hAlign = "LEFT"
     tabela.setStyle(
         TableStyle(
-            [  # padding : 8, 15
+            [
                 ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-                # aumenta o espaço dentro das células
                 ("LEFTPADDING", (0, 0), (-1, -1), 15),
                 ("RIGHTPADDING", (0, 0), (-1, -1), 15),
                 ("TOPPADDING", (0, 0), (-1, -1), 8),

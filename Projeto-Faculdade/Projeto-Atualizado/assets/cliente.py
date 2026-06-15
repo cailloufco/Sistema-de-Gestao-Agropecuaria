@@ -126,12 +126,9 @@ def realizar_compra(cadastro: dict, usuario_logado: dict, registro_de_auditoria:
 
                             dados = []
 
-                            # Cabeçalho do cupom
                             dados.append(["FAZENDA SERTÃO"])
                             dados.append(["CUPOM FISCAL"])
                             dados.append(["--------------------------------"])
-
-                            # Produtos
 
                             dados.append([f"ID: {produto['id']}"])
 
@@ -144,7 +141,11 @@ def realizar_compra(cadastro: dict, usuario_logado: dict, registro_de_auditoria:
                             dados.append([f"Status: {produto['status']}"])
 
                             dados.append(["--------------------------------"])
-                            dados.append([f"Valor Total: {(produto["quantidade"]*produto['preco']):.2f}"])
+                            dados.append(
+                                [
+                                    f"Valor Total: {(produto["quantidade"]*produto['preco']):.2f}"
+                                ]
+                            )
                             dados.append(["--------------------------------"])
 
                             dados.append(["Obrigado pela compra!"])
@@ -175,7 +176,7 @@ def realizar_compra(cadastro: dict, usuario_logado: dict, registro_de_auditoria:
                             conteudo.append(tabela)
 
                             pdf.build(conteudo)
-                            
+
                             if produto["quantidade"] == 0:
                                 produto["status"] = "Indisponivel"
                             break
@@ -372,8 +373,6 @@ def agendar_retirada(
                         hora = int(partes[0])
                         minuto = int(partes[1])
 
-                        
-
                         data = f"{ano}-{mes}-{dia}"
                         hora_data = f"{hora}:{minuto}"
 
@@ -410,12 +409,9 @@ def agendar_retirada(
 
                 dados = []
 
-                # Cabeçalho do cupom
                 dados.append(["FAZENDA SERTÃO"])
                 dados.append(["CUPOM FISCAL"])
                 dados.append(["--------------------------------"])
-
-                # Produtos
 
                 dados.append([f"Animal ID: {item_id}"])
 
@@ -630,12 +626,9 @@ def agendar_retirada(
 
                 dados = []
 
-                # Cabeçalho do cupom
                 dados.append(["FAZENDA SERTÃO"])
                 dados.append(["CUPOM FISCAL"])
                 dados.append(["--------------------------------"])
-
-                # Produtos
 
                 dados.append([f"Produto ID: {item_id}"])
 
@@ -684,6 +677,7 @@ def agendar_retirada(
             print("Saindo...")
             break
 
+
 def ver_agendamento(
     usuario_logado: dict, agendamento: dict, registro_de_auditoria: list
 ):
@@ -730,7 +724,6 @@ def ver_agendamento(
                 print(
                     f"{usuario_logado['nome']} , agendamento não encontrado ou não existente"
                 )
-        # so pra me localizar , tenho q fazer a busca de agendamentos pelos animais pq pelo produto ta feito
 
         if op == 2:
             console = Console()
@@ -786,12 +779,11 @@ def pedido_de_compra(
             print("[bold blue]->[/]", end="")
             id = int(input(" "))
 
-            nome_produto = ''
+            nome_produto = ""
             produto_id = None
             quantidade = 0
             quantidade_comprada = 0
             preco = 0
-
 
             achado = False
             console = Console()
@@ -809,7 +801,7 @@ def pedido_de_compra(
                         str(produto["id"]),
                         produto["nome"],
                         str(produto["quantidade"]),
-                        str(produto["preco"]).zfill(2)+'R$',
+                        str(produto["preco"]).zfill(2) + "R$",
                         produto["status"],
                     )
 
@@ -818,7 +810,7 @@ def pedido_de_compra(
                     quantidade = produto["quantidade"]
                     preco = produto["preco"]
                     achado = True
-                    
+
                     if achado:
                         console.print(table)
                         print("Deseja confirmar a compra? (S/N)")
@@ -830,12 +822,11 @@ def pedido_de_compra(
                             if quantidade_comprada <= 0:
                                 print("Quantidade inválida. A compra foi cancelada.")
                                 break
-                            
+
                         else:
                             print("opção inválida...")
                             return
                         break
-                    
 
             if not achado:
                 print("Produto não encontrado / Indisponível para a venda.")
@@ -883,13 +874,10 @@ def pedido_de_compra(
                             print("Tente novamente!")
                             continue
 
-                        
-
                         dataPedido = f"{ano}-{mes}-{dia}"
-                        
 
                         break
-                
+
                 quando_criado = [
                     {
                         "ano": datetime.now().year,
@@ -924,12 +912,9 @@ def pedido_de_compra(
 
                 dados = []
 
-                # Cabeçalho do cupom
                 dados.append(["FAZENDA SERTÃO"])
                 dados.append(["CUPOM FISCAL"])
                 dados.append(["--------------------------------"])
-
-                # Produtos
 
                 dados.append([f"Produto ID: {produto_id}"])
 
@@ -945,7 +930,7 @@ def pedido_de_compra(
                 dados.append([f"Data Agendada: {data}"])
                 dados.append([f"Data do Pedido: {dataPedido}"])
                 dados.append(["--------------------------------"])
-                dados.append([f'Total: {(quantidade_comprada * preco):.2f}R$'])
+                dados.append([f"Total: {(quantidade_comprada * preco):.2f}R$"])
 
                 dados.append(["--------------------------------"])
 
