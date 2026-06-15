@@ -174,7 +174,7 @@ while True:
                 elif op1 == 0:
                     break
                 elif op1 == 1:
-                    adm.cadastrar_animal(cadastro , registro_de_auditoria)
+                    adm.cadastrar_animal(cadastro, usuario_logado , registro_de_auditoria)
 
                 elif op1 == 2:
 
@@ -182,11 +182,11 @@ while True:
 
                 elif op1 == 3:
 
-                    adm.editar_animal(cadastro , registro_de_auditoria)
+                    adm.editar_animal(cadastro , usuario_logado , registro_de_auditoria)
 
                 elif op1 == 4:
 
-                    adm.excluir_animal(cadastro , registro_de_auditoria)
+                    adm.excluir_animal(cadastro , usuario_logado ,registro_de_auditoria)
 
         elif op == 2:
             menus.mostrar_cabecalho_tela("PRODUÇÃO E DERIVADOS")
@@ -198,16 +198,16 @@ while True:
             print("=" * 60)
             op1 = int(input("\n-> "))
             if op1 == 1:
-                adm.cadastrar_produto(cadastro , registro_de_auditoria)
+                adm.cadastrar_produto(cadastro , registro_de_auditoria, usuario_logado)
 
             elif op1 == 2:
                 adm.buscar_produto(cadastro, usuario_logado , registro_de_auditoria)
 
             elif op1 == 3:
-                adm.atualizar_produto(cadastro , registro_de_auditoria)
+                adm.atualizar_produto(cadastro , usuario_logado ,registro_de_auditoria)
 
             elif op1 == 4:
-                adm.remover_produto(cadastro , registro_de_auditoria)
+                adm.remover_produto(cadastro , usuario_logado ,registro_de_auditoria)
 
         elif op == 3:
 
@@ -235,7 +235,7 @@ while True:
                 elif op == 2:
                     relatorio.gerar_relatorios_produtos(cadastro)
                 elif op == 3:
-                    print("")
+                    relatorio.registro_de_auditoria(registro_de_auditoria)
         elif op == 0:
             usuario_logado = {"nome": None, "administrador": None, "logado": False}
             print("Deslogando...")
