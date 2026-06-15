@@ -8,13 +8,11 @@ import time
 from rich.progress import track
 
 
-
-
 import os
 
 from assets import acesso
 from assets import menus
-from assets import adm, cliente , relatorio
+from assets import adm, cliente, relatorio
 
 print(
     Panel.fit(
@@ -33,9 +31,9 @@ os.system("cls" if os.name == "nt" else "clear")
 
 
 usuarios_cadastrados = {
-    "nome": ["Caio"],
-    "senha": ["Caio123"],
-    "administrador": [True],
+    "nome": ["Caio", "Higor"],
+    "senha": ["Caio123", "Higor123"],
+    "administrador": [False, True],
 }
 usuario_logado = {"nome": None, "administrador": None, "logado": False}
 cadastro = {
@@ -46,7 +44,7 @@ cadastro = {
             "idade": 3,
             "raça": "Nelore",
             "peso": 324,
-            "tipo": "Vaca",
+            "tipo": "Bovino",
             "genero": "F",
             "preco": 3.370,
             "status": "Doente",
@@ -58,14 +56,14 @@ cadastro = {
             "nome": "Francisca",
             "idade": 3,
             "raça": "Nelore",
-            "peso": 324,
-            "tipo": "Vaca",
+            "peso": 361,
+            "tipo": "Bovino",
             "genero": "F",
-            "preco": 3.370,
-            "status": "Doente",
+            "preco": 3.550,
+            "status": "Engorda",
             "ano": "2023",
             "lote": "A",
-        }
+        },
     ],
     "produtos": [
         {
@@ -176,19 +174,19 @@ while True:
                 elif op1 == 0:
                     break
                 elif op1 == 1:
-                    adm.cadastrar_animal(cadastro)
+                    adm.cadastrar_animal(cadastro , registro_de_auditoria)
 
                 elif op1 == 2:
 
-                    adm.exibir_animais(cadastro, usuario_logado)
+                    adm.exibir_animais(cadastro, usuario_logado , registro_de_auditoria)
 
                 elif op1 == 3:
 
-                    adm.editar_animal(cadastro)
+                    adm.editar_animal(cadastro , registro_de_auditoria)
 
                 elif op1 == 4:
 
-                    adm.excluir_animal(cadastro)
+                    adm.excluir_animal(cadastro , registro_de_auditoria)
 
         elif op == 2:
             menus.mostrar_cabecalho_tela("PRODUÇÃO E DERIVADOS")
@@ -200,35 +198,36 @@ while True:
             print("=" * 60)
             op1 = int(input("\n-> "))
             if op1 == 1:
-                adm.cadastrar_produto(cadastro)
+                adm.cadastrar_produto(cadastro , registro_de_auditoria)
 
             elif op1 == 2:
-                adm.buscar_produto(cadastro, usuario_logado)
+                adm.buscar_produto(cadastro, usuario_logado , registro_de_auditoria)
 
             elif op1 == 3:
-                adm.atualizar_produto(cadastro)
+                adm.atualizar_produto(cadastro , registro_de_auditoria)
 
             elif op1 == 4:
-                adm.remover_produto(cadastro)
+                adm.remover_produto(cadastro , registro_de_auditoria)
 
         elif op == 3:
 
-            adm.cadastrar_racao(cadastro, usuario_logado)
+            adm.cadastrar_racao(cadastro, usuario_logado , registro_de_auditoria)
 
         elif op == 4:
 
-            adm.permitir_pedidos(pedido_de_compra, usuario_logado)
+            adm.permitir_pedidos(pedido_de_compra, usuario_logado , registro_de_auditoria)
 
         elif op == 5:
-            adm.notificacoes(cadastro, usuario_logado)
-        
+            adm.notificacoes(cadastro, usuario_logado , registro_de_auditoria)
 
         elif op == 6:
             while True:
-                print("1 - Relatorio de Animais\n"
+                print(
+                    "1 - Relatorio de Animais\n"
                     "2 - Relatorio de Produtos\n"
                     "3 - Registro de Auditoria\n"
-                    "0 - Sair")
+                    "0 - Sair"
+                )
                 print("[bold blue]->[/]", end="")
                 op = int(input(" "))
                 if op == 1:
@@ -253,23 +252,23 @@ while True:
             sleep(1)
             continue
         elif op == 1:
-            cliente.realizar_compra(cadastro, usuario_logado)
+            cliente.realizar_compra(cadastro, usuario_logado , registro_de_auditoria)
 
         elif op == 2:
-            cliente.vizualizar_estoque(cadastro, usuario_logado)
+            cliente.vizualizar_estoque(cadastro, usuario_logado , registro_de_auditoria)
 
         elif op == 3:
-            cliente.agendar_retirada(cadastro, usuario_logado, agendamento)
+            cliente.agendar_retirada(cadastro, usuario_logado, agendamento , registro_de_auditoria)
 
         elif op == 4:
-            cliente.ver_agendamento(usuario_logado, agendamento)
+            cliente.ver_agendamento(usuario_logado, agendamento , registro_de_auditoria)
 
         elif op == 5:
-            cliente.pedido_de_compra(pedido_de_compra, usuario_logado, cadastro)
+            cliente.pedido_de_compra(pedido_de_compra, usuario_logado, cadastro , registro_de_auditoria)
 
         elif op == 6:
 
-            cliente.exibir_pedidos(pedido_de_compra, usuario_logado)
+            cliente.exibir_pedidos(pedido_de_compra, usuario_logado , registro_de_auditoria)
 
         elif op == 0:
             print("Deslogando...")

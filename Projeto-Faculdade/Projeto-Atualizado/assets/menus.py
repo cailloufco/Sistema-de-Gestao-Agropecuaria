@@ -29,6 +29,7 @@ def menu_cliente(usuario_logado: dict):
     print(" 0 - Sair")
     print("=" * 60)
 
+
 def mostrar_menu_inicial():
     print("\n" + "=" * 60)
     print("SISTEMA DE GESTÃO AGROPECUÁRIA".center(60))

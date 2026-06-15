@@ -939,7 +939,7 @@ def permitir_pedidos(
                     data = pedido["criado_em"][0]
 
                     table.add_row(
-                        str(pedido["item_id"]),
+                        str(indice),
                         pedido["nome_cliente"],
                         pedido["nome_produto"],
                         str(pedido["quantidade"]),

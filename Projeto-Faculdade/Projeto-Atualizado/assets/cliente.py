@@ -2,9 +2,17 @@ from datetime import datetime
 from assets import menus
 
 from rich import print
-from rich.table import Table
+from rich.table import Table as tabelinha
 from rich.console import Console
 from rich import box
+
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.units import cm
 
 
 def realizar_compra(cadastro: dict, usuario_logado: dict, registro_de_auditoria: list):
@@ -19,7 +27,7 @@ def realizar_compra(cadastro: dict, usuario_logado: dict, registro_de_auditoria:
         print("Digite o ID do animal que deseja comprar: ")
         id = input("-> ")
         console = Console()
-        table = Table(title="Compra de Animal")
+        table = tabelinha(title="Compra de Animal")
         table.add_column("ID")
         table.add_column("NOME")
         table.add_column("RAÇA")
@@ -44,7 +52,7 @@ def realizar_compra(cadastro: dict, usuario_logado: dict, registro_de_auditoria:
                     if confirmacao == "S":
                         cadastro["animais"].remove(animal)
                         print(f"Compra do animal ID [bold yellow]{id}[/] confirmada!")
-                        registro_de_auditoria(
+                        registro_de_auditoria.append(
                             f'O cliente {usuario_logado["nome"]} , comprou o animal ID {id} ,  {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
                         )
                         break
@@ -62,7 +70,7 @@ def realizar_compra(cadastro: dict, usuario_logado: dict, registro_de_auditoria:
         id = int(input("-> "))
 
         console = Console()
-        table = Table(title="Compra de Produto")
+        table = tabelinha(title="Compra de Produto")
         table.add_column("ID")
         table.add_column("NOME")
         table.add_column("QUANTIDADE")
@@ -102,9 +110,70 @@ def realizar_compra(cadastro: dict, usuario_logado: dict, registro_de_auditoria:
                             print(
                                 f"Compra de {quantidade_comprada} unidades do produto ID [bold yellow]{id}[/] confirmada!"
                             )
-                            registro_de_auditoria(
+                            print("[bold italic light_green]Cupom Fiscal Gerado ![/]")
+
+                            registro_de_auditoria.append(
                                 f'O cliente {usuario_logado["nome"]} , comprou o produto ID: {id} - Quantia: {quantidade_comprada} ,  {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
                             )
+
+                            pdf = SimpleDocTemplate("cupom_fiscal.pdf")
+
+                            styles = getSampleStyleSheet()
+
+                            conteudo = []
+
+                            conteudo.append(Spacer(1, 20))
+
+                            dados = []
+
+                            # Cabeçalho do cupom
+                            dados.append(["FAZENDA SERTÃO"])
+                            dados.append(["CUPOM FISCAL"])
+                            dados.append(["--------------------------------"])
+
+                            # Produtos
+
+                            dados.append([f"ID: {produto['id']}"])
+
+                            dados.append([f"Produto: {produto['nome']}"])
+
+                            dados.append([f"Quantidade: {produto['quantidade']}"])
+
+                            dados.append([f"Preço: R$ {produto['preco']}"])
+
+                            dados.append([f"Status: {produto['status']}"])
+
+                            dados.append(["--------------------------------"])
+
+                            dados.append(["Obrigado pela compra!"])
+                            estilo_cupom = ParagraphStyle(
+                                "cupom",
+                                fontName="Courier",
+                                fontSize=9,
+                                alignment=TA_CENTER,
+                                leading=12,
+                            )
+
+                            tabela = Table(dados, colWidths=[6 * cm])
+
+                            tabela.hAlign = "LEFT"
+
+                            tabela.setStyle(
+                                TableStyle(
+                                    [
+                                        ("BOX", (0, 0), (-1, -1), 2, colors.black),
+                                        ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+                                        ("LEFTPADDING", (0, 0), (-1, -1), 10),
+                                        ("RIGHTPADDING", (0, 0), (-1, -1), 10),
+                                        ("TOPPADDING", (0, 0), (-1, -1), 4),
+                                        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                                    ]
+                                )
+                            )
+                            conteudo.append(tabela)
+
+                            pdf.build(conteudo)
+
                             if produto["quantidade"] == 0:
                                 produto["status"] = "Indisponivel"
                             break
@@ -131,7 +200,7 @@ def vizualizar_estoque(
         achou = False
         if cadastro["animais"]:
             console = Console()
-            table = Table(title="Retirada de Animal")
+            table = tabelinha(title="Retirada de Animal")
             table.add_column("ID")
             table.add_column("NOME")
             table.add_column("RAÇA")
@@ -153,7 +222,7 @@ def vizualizar_estoque(
                     achou = True
             if achou:
                 console.print(table)
-                registro_de_auditoria(
+                registro_de_auditoria.append(
                     f'O cliente {usuario_logado["nome"]} , visualizou todos os animais a venda ,  {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
                 )
             if not achou:
@@ -164,7 +233,7 @@ def vizualizar_estoque(
 
     elif op == 2:
         console = Console()
-        table = Table(title="Retirada de Animal")
+        table = tabelinha(title="Retirada de Animal")
         table.add_column("ID")
         table.add_column("NOME")
         table.add_column("QUANTIDADE")
@@ -185,7 +254,7 @@ def vizualizar_estoque(
                     produto_disponivel = True
             if produto_disponivel:
                 console.print(table)
-                registro_de_auditoria(
+                registro_de_auditoria.append(
                     f'O cliente {usuario_logado["nome"]} , visualizou todos os produtos a venda ,  {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
                 )
             if not produto_disponivel:
@@ -210,9 +279,10 @@ def agendar_retirada(
             nome_cliente = usuario_logado["nome"]
             tipo = "Animal"
             item_id = input("Digite o ID do animal que deseja agendar a retirada: ")
+            preco = None
             animal_encontrado = False
             console = Console()
-            table = Table(title="Retirada de Animal")
+            table = tabelinha(title="Retirada de Animal")
             table.add_column("ID")
             table.add_column("NOME")
             table.add_column("RAÇA")
@@ -234,6 +304,7 @@ def agendar_retirada(
 
                     animal_encontrado = True
                     animal_nome = animal["nome"]
+                    preco = animal["preco"]
                     break
 
             if not animal_encontrado:
@@ -341,6 +412,68 @@ def agendar_retirada(
                 registro_de_auditoria.append(
                     f'o cliente {usuario_logado["nome"]} agendou retirada às {datetime.now().strftime("%d/%m/%Y às %H:%M")} do animal {animal_nome}'
                 )
+                print("[bold italic light_green]Cupom Fiscal Gerado ![/]")
+                pdf = SimpleDocTemplate("cupom_fiscal.pdf")
+
+                styles = getSampleStyleSheet()
+
+                conteudo = []
+
+                conteudo.append(Spacer(1, 20))
+
+                dados = []
+
+                # Cabeçalho do cupom
+                dados.append(["FAZENDA SERTÃO"])
+                dados.append(["CUPOM FISCAL"])
+                dados.append(["--------------------------------"])
+
+                # Produtos
+
+                dados.append([f"Animal ID: {item_id}"])
+
+                dados.append([f"Cliente: {nome_cliente}"])
+
+                dados.append([f"Nome Animal: {animal_nome}"])
+
+                dados.append([f"Tipo: {tipo}"])
+
+                dados.append([f"Preço: R$ {preco}"])
+
+                dados.append([f"Status: Agendado"])
+
+                dados.append([f"Data Agendada: {data}"])
+
+                dados.append(["--------------------------------"])
+
+                dados.append(["Obrigado pela compra!"])
+                estilo_cupom = ParagraphStyle(
+                    "cupom",
+                    fontName="Courier",
+                    fontSize=9,
+                    alignment=TA_CENTER,
+                    leading=12,
+                )
+
+                tabela = Table(dados, colWidths=[6 * cm])
+
+                tabela.hAlign = "LEFT"
+
+                tabela.setStyle(
+                    TableStyle(
+                        [
+                            ("BOX", (0, 0), (-1, -1), 2, colors.black),
+                            ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+                            ("LEFTPADDING", (0, 0), (-1, -1), 10),
+                            ("RIGHTPADDING", (0, 0), (-1, -1), 10),
+                            ("TOPPADDING", (0, 0), (-1, -1), 4),
+                            ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                        ]
+                    )
+                )
+                conteudo.append(tabela)
+
+                pdf.build(conteudo)
         elif op == 2:
             nome_cliente = usuario_logado["nome"]
             tipo = "Produto"
@@ -349,9 +482,9 @@ def agendar_retirada(
             )
             produto_encontrado = False
             produto_nome = ""
-
+            preco = None
             console = Console()
-            table = Table(title="Retirada de Produto")
+            table = tabelinha(title="Retirada de Produto")
             table.add_column("ID")
             table.add_column("NOME")
             table.add_column("QUANTIDADE")
@@ -370,6 +503,7 @@ def agendar_retirada(
                     )
 
                     produto_nome = produto["nome"]
+                    preco = produto["preco"]
                     produto_encontrado = True
                     break
             if not produto_encontrado:
@@ -497,6 +631,68 @@ def agendar_retirada(
                 registro_de_auditoria.append(
                     f'o cliente {usuario_logado["nome"]} agendou retirada às {datetime.now().strftime("%d/%m/%Y às %H:%M")} do produto {nome_produto}'
                 )
+                print("[bold italic light_green]Cupom Fiscal Gerado ![/]")
+
+                pdf = SimpleDocTemplate("cupom_fiscal.pdf")
+
+                styles = getSampleStyleSheet()
+
+                conteudo = []
+
+                conteudo.append(Spacer(1, 20))
+
+                dados = []
+
+                # Cabeçalho do cupom
+                dados.append(["FAZENDA SERTÃO"])
+                dados.append(["CUPOM FISCAL"])
+                dados.append(["--------------------------------"])
+
+                # Produtos
+
+                dados.append([f"Produto ID: {item_id}"])
+
+                dados.append([f"Cliente: {nome_cliente}"])
+
+                dados.append([f"Produto: {produto_nome}"])
+
+                dados.append([f"Quantidade: {quantia}"])
+                dados.append([f"Preço: R$ {preco}"])
+
+                dados.append([f"Status: Agendado"])
+
+                dados.append([f"Data Agendada: {data}"])
+
+                dados.append(["--------------------------------"])
+
+                dados.append(["Obrigado pela compra!"])
+                estilo_cupom = ParagraphStyle(
+                    "cupom",
+                    fontName="Courier",
+                    fontSize=9,
+                    alignment=TA_CENTER,
+                    leading=12,
+                )
+
+                tabela = Table(dados, colWidths=[6 * cm])
+
+                tabela.hAlign = "LEFT"
+
+                tabela.setStyle(
+                    TableStyle(
+                        [
+                            ("BOX", (0, 0), (-1, -1), 2, colors.black),
+                            ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+                            ("LEFTPADDING", (0, 0), (-1, -1), 10),
+                            ("RIGHTPADDING", (0, 0), (-1, -1), 10),
+                            ("TOPPADDING", (0, 0), (-1, -1), 4),
+                            ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                        ]
+                    )
+                )
+                conteudo.append(tabela)
+
+                pdf.build(conteudo)
 
 
 def ver_agendamento(
@@ -512,7 +708,7 @@ def ver_agendamento(
             break
         if op == 1:
             console = Console()
-            table = Table(title="[bold italic]Ver Agendamento[/]")
+            table = tabelinha(title="[bold italic]Ver Agendamento[/]")
             table.add_column("ID")
             table.add_column("NOME")
             table.add_column("TIPO")
@@ -549,7 +745,7 @@ def ver_agendamento(
 
         if op == 2:
             console = Console()
-            table = Table(title="[bold italic]Agendamento de Produtos[/]")
+            table = tabelinha(title="[bold italic]Agendamento de Produtos[/]")
             table.add_column("ID")
             table.add_column("NOME")
             table.add_column("TIPO")
@@ -601,13 +797,16 @@ def pedido_de_compra(
             print("[bold blue]->[/]", end="")
             id = int(input(" "))
 
-            nome_produto = None
+            nome_produto = ''
             produto_id = None
-            quantidade = None
+            quantidade = 0
+            quantidade_comprada = 0
+            preco = 0
+
 
             achado = False
             console = Console()
-            table = Table(title="[bold italic]Produtos Encontrados[/]")
+            table = tabelinha(title="[bold italic]Produtos Encontrados[/]")
             table.add_column("ID")
             table.add_column("PRODUTO")
             table.add_column("QUANTIDADE")
@@ -621,24 +820,87 @@ def pedido_de_compra(
                         str(produto["id"]),
                         produto["nome"],
                         str(produto["quantidade"]),
-                        str(produto["preco"]),
+                        str(produto["preco"]).zfill(2)+'R$',
                         produto["status"],
                     )
 
                     nome_produto = produto["nome"]
                     produto_id = produto["id"]
                     quantidade = produto["quantidade"]
-
+                    preco = produto["preco"]
                     achado = True
-                    break
+                    
+                    if achado:
+                        console.print(table)
+                        print("Deseja confirmar a compra? (S/N)")
+                        confirmacao = input("-> ").upper()
+                        if confirmacao == "S":
+                            quantidade_comprada = int(
+                                input("Digite a quantidade que deseja comprar: ")
+                            )
+                            if quantidade_comprada <= 0:
+                                print("Quantidade inválida. A compra foi cancelada.")
+                                break
+                            
+                        else:
+                            print("opção inválida...")
+                            return
+                        break
+                    
 
             if not achado:
-                print("Produto não disponível para venda ou sem estoque.")
+                print("Produto não encontrado / Indisponível para a venda.")
                 break
+            dataPedido = None
+            hora_dataPedido = None
             if achado:
+                while True:
+                    print("Digite o dia da retirada do produto:")
+                    dia = int(input("-> "))
 
-                console.print(table)
+                    print("Digite o mês da retirada do produto:")
+                    mes = int(input("-> "))
 
+                    if mes < 1 or mes > 12:
+                        print("Mês inválido!")
+                        print("Tente novamente!")
+                        continue
+                    else:
+
+                        print("Digite o ano da retirada do produto:")
+                        ano = int(input("-> "))
+
+                        if dia < 1 or dia > 31:
+                            print("Dia inválido!")
+                            print("Tente novamente!")
+                            continue
+
+                        elif ano < datetime.now().year:
+                            print("Ano inválido!")
+                            print("Tente novamente!")
+                            continue
+
+                        elif ano == datetime.now().year and mes < datetime.now().month:
+                            print("Data inválida!")
+                            print("Tente novamente!")
+                            continue
+
+                        elif (
+                            ano == datetime.now().year
+                            and mes == datetime.now().month
+                            and dia < datetime.now().day
+                        ):
+                            print("Data inválida!")
+                            print("Tente novamente!")
+                            continue
+
+                        
+
+                        dataPedido = f"{ano}-{mes}-{dia}"
+                        
+
+                        break
+                
                 quando_criado = [
                     {
                         "ano": datetime.now().year,
@@ -648,20 +910,84 @@ def pedido_de_compra(
                         "minuto": datetime.now().minute,
                     }
                 ]
+                data = f'{str(quando_criado[0]["dia"]).zfill(2)}/{str(quando_criado[0]["mes"]).zfill(2)}/{quando_criado[0]["ano"]}'
                 pedido = {
                     "nome_cliente": usuario_logado["nome"],
                     "nome_produto": nome_produto,
                     "item_id": produto_id,
                     "status_pedido": "Aguardo",
                     "criado_em": quando_criado,
-                    "quantidade": quantidade,
+                    "quantidade": quantidade_comprada,
                 }
                 pedido_de_compra["pedidos"].append(pedido)
 
                 registro_de_auditoria.append(
                     f'o cliente {usuario_logado["nome"]} criou um pedido de compra às {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
                 )
+                print("[bold italic light_green]Cupom Fiscal Gerado ![/]")
+                pdf = SimpleDocTemplate("cupom_fiscal.pdf")
 
+                styles = getSampleStyleSheet()
+
+                conteudo = []
+
+                conteudo.append(Spacer(1, 20))
+
+                dados = []
+
+                # Cabeçalho do cupom
+                dados.append(["FAZENDA SERTÃO"])
+                dados.append(["CUPOM FISCAL"])
+                dados.append(["--------------------------------"])
+
+                # Produtos
+
+                dados.append([f"Produto ID: {produto_id}"])
+
+                dados.append([f"Cliente: {usuario_logado['nome']}"])
+
+                dados.append([f"Produto: {nome_produto}"])
+
+                dados.append([f"Quantidade: {quantidade_comprada}"])
+                dados.append([f"Preço: R$ {produto["preco"]}"])
+
+                dados.append([f"Status: Agendado"])
+
+                dados.append([f"Data Agendada: {data}"])
+                dados.append([f"Data do Pedido: {dataPedido}"])
+                dados.append(["--------------------------------"])
+                dados.append([f'Total: {(quantidade_comprada * preco):.2f}R$'])
+
+                dados.append(["--------------------------------"])
+
+                dados.append(["Obrigado pela compra!"])
+                estilo_cupom = ParagraphStyle(
+                    "cupom",
+                    fontName="Courier",
+                    fontSize=9,
+                    alignment=TA_CENTER,
+                    leading=12,
+                )
+
+                tabela = Table(dados, colWidths=[6 * cm])
+
+                tabela.hAlign = "LEFT"
+
+                tabela.setStyle(
+                    TableStyle(
+                        [
+                            ("BOX", (0, 0), (-1, -1), 2, colors.black),
+                            ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+                            ("LEFTPADDING", (0, 0), (-1, -1), 10),
+                            ("RIGHTPADDING", (0, 0), (-1, -1), 10),
+                            ("TOPPADDING", (0, 0), (-1, -1), 4),
+                            ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                        ]
+                    )
+                )
+                conteudo.append(tabela)
+
+                pdf.build(conteudo)
         else:
             print("Saindo...")
             break
@@ -673,7 +999,7 @@ def exibir_pedidos(pedidos: dict, usuario_logado: dict, registro_de_auditoria):
     achado = False
 
     console = Console()
-    table = Table(title="[bold italic]Seus Pedidos[/]")
+    table = tabelinha(title="[bold italic]Seus Pedidos[/]")
     table.add_column("ID")
     table.add_column("NOME")
     table.add_column("QUANTIDADE")

@@ -52,17 +52,14 @@ def gerar_relatorios_animais(cadastro: dict):
             animal["idade"],
             animal["peso"],
             animal["genero"],
-            str(animal["preco"])+"R$",
+            str(animal["preco"]) + "R$",
             animal["status"],
         ]
         dados.append(dado)
-   
 
     largura, altura = A4
 
-    tabela = Table(
-        dados
-    )
+    tabela = Table(dados)
     tabela.hAlign = "LEFT"
     tabela.setStyle(
         TableStyle(
@@ -79,14 +76,12 @@ def gerar_relatorios_animais(cadastro: dict):
     )
 
     conteudo.append(tabela)
-    
+
     pdf.build(conteudo)
 
     print("PDF criado com sucesso!")
 
 
-
-    
 def gerar_relatorios_produtos(cadastro: dict):
 
     pdf = SimpleDocTemplate("relatorio_produtos.pdf")
@@ -101,9 +96,7 @@ def gerar_relatorios_produtos(cadastro: dict):
 
     conteudo.append(Spacer(1, 20))
 
-    dados = [
-        ["ID", "Nome", "Quantidade", "Preco", "Status" ]
-    ]
+    dados = [["ID", "Nome", "Quantidade", "Preco", "Status"]]
     """
      "id": 1,
             "nome": "Queijo",
@@ -116,22 +109,19 @@ def gerar_relatorios_produtos(cadastro: dict):
             produto["id"],
             produto["nome"],
             produto["quantidade"],
-            str(produto["preco"])+"R$",
+            str(produto["preco"]) + "R$",
             produto["status"],
-
         ]
         dados.append(dado)
     from reportlab.lib.pagesizes import A4
 
     largura, altura = A4
 
-    tabela = Table(
-        dados
-    )
+    tabela = Table(dados)
     tabela.hAlign = "LEFT"
     tabela.setStyle(
         TableStyle(
-            [    #padding : 8, 15 
+            [  # padding : 8, 15
                 ("ALIGN", (0, 0), (-1, -1), "CENTER"),
                 # aumenta o espaço dentro das células
                 ("LEFTPADDING", (0, 0), (-1, -1), 15),
@@ -144,7 +134,7 @@ def gerar_relatorios_produtos(cadastro: dict):
     )
 
     conteudo.append(tabela)
-    
+
     pdf.build(conteudo)
 
     print("PDF criado com sucesso!")
