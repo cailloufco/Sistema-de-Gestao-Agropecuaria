@@ -284,7 +284,7 @@ def atualizar_produto(
 
             console.print(table)
 
-            print(f"Produto ID [bold yellow]{id}[/] atualizado com sucesso!")
+            print(f"[bold italic light_green]Produto ID: [bold yellow]{id}[/] atualizado com sucesso ![/]")
             registro_de_auditoria.append(
                 f'O usuario {usuario_logado["nome"]} atualizou o produto ID {id} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
             )
@@ -323,7 +323,7 @@ def remover_produto(cadastro: dict, usuario_logado: dict, registro_de_auditoria:
 
                 cadastro["produtos"].remove(produto)
                 print(
-                    f"Produto ID [bold yellow]{id} [italic red]removido[/] com sucesso!"
+                    f"Produto ID [bold yellow]{id}[/] [italic red]removido[/] com sucesso!"
                 )
                 registro_de_auditoria.append(
                     f'o usuario {usuario_logado["nome"]} removeu o produto ID {id} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
@@ -441,7 +441,7 @@ def cadastrar_racao(cadastro: dict, usuario_logado: dict, registro_de_auditoria:
                     if limiar:
                         racao["limiar_de_estoque"] = float(limiar)
 
-                    print(f"Produto ID {id} atualizado com sucesso!")
+                    print(f"[bold italic light_green]Ração ID: [bold yellow]{id}[/] cadastrada com sucesso ![/]")
                     registro_de_auditoria(
                         f'O usuario {usuario_logado["nome"]} atualizou a ração de ID {id} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
                     )
@@ -546,11 +546,11 @@ def cadastrar_animal(cadastro: dict, usuario_logado: dict, registro_de_auditoria
         contador = 0
 
         for animal in cadastro["animais"]:
-            if "ano" in animal and "lote" in animal:
-                if animal["ano"] == ano and animal["lote"] == lote:
-                    animal_numero = int(animal["id"][:3])
-                    if animal_numero > contador:
-                        contador = animal_numero
+            if animal["ano"] == ano and animal["lote"] == lote:
+                animal_numero = int(animal["id"][:3])
+                if animal_numero > contador:
+                    contador = animal_numero
+            
 
         numero = str(contador + 1).zfill(3)
         ano_formatado = ano[-2:]
@@ -590,7 +590,7 @@ def cadastrar_animal(cadastro: dict, usuario_logado: dict, registro_de_auditoria
             }
         )
 
-        print("\nAnimal cadastrado com sucesso!")
+        print(f"[bold italic light_green]Animal ID: [bold yellow]{codigo}[/] cadastrado com sucesso ![/]")
         registro_de_auditoria.append(
             f'o usuario {usuario_logado["nome"]} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}'
         )
@@ -640,7 +640,7 @@ def exibir_animais(cadastro: dict, usuario_logado: dict, registro_de_auditoria: 
         print("[bold blue]->[/]", end="")
         op = int(input(" "))
         if op == 1:
-            id = input("Digite o ID do animal que deseja buscar: ")
+            id = input("Digite o [bold yellow]ID[/] do animal que deseja buscar: ")
             for animal in cadastro["animais"]:
                 if animal["id"] == id:
 
@@ -668,7 +668,7 @@ def exibir_animais(cadastro: dict, usuario_logado: dict, registro_de_auditoria: 
                     )
                     break
             else:
-                print(f"Animal ID {id} não encontrado.")
+                print(f"Animal ID [bold yellow]{id}[/] não encontrado.")
         elif op == 2:
             tipo = input("Digite o tipo do animal que deseja buscar: ")
             animal_encontrado = False
@@ -699,7 +699,7 @@ def exibir_animais(cadastro: dict, usuario_logado: dict, registro_de_auditoria: 
                     f"o usuario {usuario_logado["nome"]} buscou pelo animal do tipo: {tipo} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}"
                 )
             if not animal_encontrado:
-                print(f"Animais do tipo {tipo} não encontrados.")
+                print(f"Animais do tipo [bold yellow]{tipo}[/] não encontrados.")
         elif op == 3:
             status = input("Digite o status do animal que deseja buscar: ")
             animal_encontrado = False
@@ -730,7 +730,7 @@ def exibir_animais(cadastro: dict, usuario_logado: dict, registro_de_auditoria: 
                 )
                 console.print(table)
             if not animal_encontrado:
-                print(f"Animais com status {status} não encontrados.")
+                print(f"Animais com status [bold yellow]{status}[/] não encontrados.")
         elif op == 4:
             console = Console()
             table = Table(title="Animais Encontrados")
@@ -869,7 +869,7 @@ def editar_animal(cadastro: dict, usuario_logado: dict, registro_de_auditoria: l
             )
             console.print(table)
 
-            print(f"Animal ID {id} atualizado com sucesso!")
+            print(f"Animal ID [bold yellow]{id}[/] atualizado com sucesso!")
             registro_de_auditoria.append(
                 f"o usuario {usuario_logado["nome"]} editou o animal com ID {id} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}"
             )
@@ -879,13 +879,14 @@ def excluir_animal(cadastro: dict, usuario_logado: dict, registro_de_auditoria: 
     id = input("Qual animal deseja excluir? (Digite o ID): ")
     for animal in cadastro["animais"]:
         if animal["id"] == id:
-            print(f"Você tem certeza que deseja excluir o animal ID {id}? (S/N)")
+            print(f"Você tem certeza que deseja excluir o animal ID [bold yellow]{id}[/]? (S/N)")
 
             print("[bold blue]->[/]", end="")
             confirmacao = input(" ")
             if confirmacao == "S":
                 cadastro["animais"].remove(animal)
-                print(f"Animal ID {id} excluído com sucesso!")
+                print(f"[bold italic light_green]Animal ID: [bold yellow]{id}[/] excluido com sucesso ![/]")
+                sleep(1.2)
                 registro_de_auditoria.append(
                     f"o usuario {usuario_logado["nome"]} excluiu o animal com ID {id} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}"
                 )
@@ -975,7 +976,8 @@ def permitir_pedidos(
 
             elif decisao == 2:
                 pedido_de_compra["pedidos"][indice_real]["status_pedido"] = "Recusado"
-                print("Pedido recusado com sucesso!")
+                print("[bold italic light_green]Pedido Recusado com Sucesso !![/]")
+                sleep(1.2)
                 registro_de_auditoria.append(
                     f"o usuario {usuario_logado["nome"]} permitiu o recusou de {pedido['nome_cliente']} , {datetime.now().strftime("%d/%m/%Y às %H:%M")}"
                 )

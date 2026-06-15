@@ -144,6 +144,8 @@ def realizar_compra(cadastro: dict, usuario_logado: dict, registro_de_auditoria:
                             dados.append([f"Status: {produto['status']}"])
 
                             dados.append(["--------------------------------"])
+                            dados.append([f"Valor Total: {(produto["quantidade"]*produto['preco']):.2f}"])
+                            dados.append(["--------------------------------"])
 
                             dados.append(["Obrigado pela compra!"])
                             estilo_cupom = ParagraphStyle(
@@ -173,7 +175,7 @@ def realizar_compra(cadastro: dict, usuario_logado: dict, registro_de_auditoria:
                             conteudo.append(tabela)
 
                             pdf.build(conteudo)
-
+                            
                             if produto["quantidade"] == 0:
                                 produto["status"] = "Indisponivel"
                             break
@@ -308,7 +310,7 @@ def agendar_retirada(
                     break
 
             if not animal_encontrado:
-                print(f"O animal com ID {item_id} não existe")
+                print(f"O animal com ID [bold yellow]{item_id}[/] não existe")
                 continue
             if animal_encontrado:
                 console.print(table)
@@ -370,22 +372,7 @@ def agendar_retirada(
                         hora = int(partes[0])
                         minuto = int(partes[1])
 
-                        if minuto_atual > minuto:
-                            print("horario inválido")
-                            print("Tente novamente!")
-                            continue
-                        if hora_atual > hora:
-                            print("horario inválido")
-                            print("Tente novamente!")
-                            continue
-                        if hora > 23 or hora < 0:
-                            print("horario inválido")
-                            print("Tente novamente!")
-                            continue
-                        if minuto > 59 or minuto < 0:
-                            print("horario inválido")
-                            print("Tente novamente!")
-                            continue
+                        
 
                         data = f"{ano}-{mes}-{dia}"
                         hora_data = f"{hora}:{minuto}"
@@ -407,7 +394,7 @@ def agendar_retirada(
                 }
                 agendamento["animais"].append(cadastro_agendamento)
                 print(
-                    f"Retirada do animal ID {item_id} agendada para {data} às {hora_data}."
+                    f"[bold italic light_green]Retirada do animal ID [bold yellow]{item_id}[/] agendada para {data} às {hora_data}[/]."
                 )
                 registro_de_auditoria.append(
                     f'o cliente {usuario_logado["nome"]} agendou retirada às {datetime.now().strftime("%d/%m/%Y às %H:%M")} do animal {animal_nome}'
@@ -693,7 +680,9 @@ def agendar_retirada(
                 conteudo.append(tabela)
 
                 pdf.build(conteudo)
-
+        elif op == 0:
+            print("Saindo...")
+            break
 
 def ver_agendamento(
     usuario_logado: dict, agendamento: dict, registro_de_auditoria: list
